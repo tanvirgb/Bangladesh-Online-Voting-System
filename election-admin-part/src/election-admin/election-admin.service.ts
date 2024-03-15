@@ -6,6 +6,7 @@ import { ElectionAdminContact } from './entities/election-admin-contact.entity';
 import { ElectionAdminProfile } from './entities/election-admin-profile.entity';
 import { Repository } from 'typeorm';
 import { ElectionAdmin } from './entities/election-admin.entity';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class ElectionAdminService {
@@ -37,7 +38,12 @@ export class ElectionAdminService {
 
     const admin = new ElectionAdmin();
     admin.username = createElectionAdminDto.username;
-    admin.password = createElectionAdminDto.password;
+    const hashedPassword = await bcrypt.hash(
+      createElectionAdminDto.password,
+      10,
+    );
+
+    admin.password = hashedPassword;
     admin.nid = createElectionAdminDto.nid;
     admin.profile = savedProfile;
     admin.contacts = [savedContact];
