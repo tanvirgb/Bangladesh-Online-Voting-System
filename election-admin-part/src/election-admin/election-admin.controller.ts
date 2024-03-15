@@ -1,15 +1,27 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  ValidationPipe,
+} from '@nestjs/common';
 import { ElectionAdminService } from './election-admin.service';
 import { CreateElectionAdminDto } from './dto/create-election-admin.dto';
 import { UpdateElectionAdminDto } from './dto/update-election-admin.dto';
+import { ElectionAdmin } from './entities/election-admin.entity';
 
 @Controller('election-admin')
 export class ElectionAdminController {
   constructor(private readonly electionAdminService: ElectionAdminService) {}
 
-  @Post()
-  create(@Body() createElectionAdminDto: CreateElectionAdminDto) {
-    return this.electionAdminService.create(createElectionAdminDto);
+  @Post('/registration')
+  async createElectionAdmin(
+    @Body(new ValidationPipe()) createAdminDto: CreateElectionAdminDto,
+  ): Promise<ElectionAdmin> {
+    return await this.electionAdminService.createElectionAdmin(createAdminDto);
   }
 
   @Get()
@@ -23,7 +35,10 @@ export class ElectionAdminController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateElectionAdminDto: UpdateElectionAdminDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateElectionAdminDto: UpdateElectionAdminDto,
+  ) {
     return this.electionAdminService.update(+id, updateElectionAdminDto);
   }
 

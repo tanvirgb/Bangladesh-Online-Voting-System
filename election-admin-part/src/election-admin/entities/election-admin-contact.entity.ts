@@ -5,7 +5,7 @@ import {
   ManyToOne,
   Generated,
 } from 'typeorm';
-import { ElectionAdminProfile } from './election-admin-profile.entity';
+import { ElectionAdmin } from './election-admin.entity';
 
 @Entity()
 export class ElectionAdminContact {
@@ -16,12 +16,11 @@ export class ElectionAdminContact {
   @Generated('uuid')
   uniqueId: string;
 
-  @Column({ default: 'contact', length: 25 })
+  @Column({ length: 25 })
   contact: string;
 
-  @ManyToOne(
-    () => ElectionAdminProfile,
-    (electionAdminProfile) => electionAdminProfile.electionAdminContacts,
-  )
-  electionAdminProfile: ElectionAdminProfile;
+  @ManyToOne(() => ElectionAdmin, (admin) => admin.contacts, {
+    
+  })
+  admin: ElectionAdmin;
 }

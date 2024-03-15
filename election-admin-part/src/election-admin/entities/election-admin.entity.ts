@@ -5,8 +5,10 @@ import {
   OneToOne,
   JoinColumn,
   Generated,
+  OneToMany,
 } from 'typeorm';
 import { ElectionAdminProfile } from './election-admin-profile.entity';
+import { ElectionAdminContact } from './election-admin-contact.entity';
 
 @Entity()
 export class ElectionAdmin {
@@ -17,22 +19,22 @@ export class ElectionAdmin {
   @Generated('uuid')
   uniqueId: string;
 
-  @Column({ default: 'username', length: 70, unique: true })
+  @Column({ length: 70, unique: true })
   username: string;
 
-  @Column({ default: 'password', length: 70 })
+  @Column({ length: 70 })
   password: string;
 
-  @Column({ default: 0, unique: true })
-  nid: number;
+  @Column({ length: 70, unique: true })
+  nid: string;
 
-  @OneToOne(
-    () => ElectionAdminProfile,
-    (electionAdminProfile) => electionAdminProfile.electionAdmin,
-    {
-      cascade: true,
-    },
-  )
-  @JoinColumn()
-  electionAdminProfile: ElectionAdminProfile;
+  @OneToOne(() => ElectionAdminProfile, (profile) => profile.admin, {
+    cascade: true,
+  })
+  profile: ElectionAdminProfile;
+
+  @OneToMany(() => ElectionAdminContact, (contact) => contact.admin, {
+    cascade: true,
+  })
+  contacts: ElectionAdminContact[];
 }

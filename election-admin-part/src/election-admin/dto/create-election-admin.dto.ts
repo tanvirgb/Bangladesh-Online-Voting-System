@@ -1,6 +1,5 @@
 import {
   IsEmail,
-  IsNumber,
   IsString,
   Matches,
   MaxLength,
@@ -25,8 +24,9 @@ export class CreateElectionAdminDto {
   @IsString()
   readonly password: string;
 
-  @IsNumber({}, { message: 'NID must be a valid number' })
-  readonly nid: number;
+  @IsString({ message: 'NID must be a string' })
+  @MaxLength(69, { message: 'NID cannot be longer than 69 characters' })
+  readonly nid: string;
 
   @IsString({ message: 'Name must be a string' })
   @MaxLength(149, { message: 'Name cannot be longer than 149 characters' })

@@ -3,11 +3,11 @@ import {
   PrimaryGeneratedColumn,
   Column,
   OneToOne,
-  OneToMany,
   Generated,
+  JoinColumn,
 } from 'typeorm';
 import { ElectionAdmin } from './election-admin.entity';
-import { ElectionAdminContact } from './election-admin-contact.entity';
+
 @Entity()
 export class ElectionAdminProfile {
   @PrimaryGeneratedColumn()
@@ -17,31 +17,22 @@ export class ElectionAdminProfile {
   @Generated('uuid')
   uniqueId: string;
 
-  @Column({ default: 'name', length: 150 })
+  @Column({ length: 150 })
   name: string;
 
-  @Column({ default: 'address', length: 250 })
+  @Column({ length: 250 })
   address: string;
 
-  @Column({ default: 'email', length: 70 })
+  @Column({ length: 70 })
   email: string;
 
-  @Column({ default: 'gender', length: 30 })
+  @Column({ length: 30 })
   gender: string;
 
-  @Column({ default: 'religion', length: 30 })
+  @Column({ length: 30 })
   religion: string;
 
-  @OneToOne(
-    () => ElectionAdmin,
-    (electionAdmin) => electionAdmin.electionAdminProfile,
-  )
-  electionAdmin: ElectionAdmin;
-
-  @OneToMany(
-    () => ElectionAdminContact,
-    (electionAdminContact) => electionAdminContact.electionAdminProfile,
-    { cascade: true },
-  )
-  electionAdminContacts: ElectionAdminContact[];
+  @OneToOne(() => ElectionAdmin, (admin) => admin.profile)
+  @JoinColumn()
+  admin: ElectionAdmin;
 }
