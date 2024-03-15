@@ -6,7 +6,7 @@ import { ElectionAdmin } from './entities/election-admin.entity';
 import { ElectionAdminContact } from './entities/election-admin-contact.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Party } from './entities/party.entity';
-import { Report } from './entities/report.entity';
+import { ReportIssue } from './entities/report.entity';
 
 @Module({
   imports: [
@@ -15,7 +15,7 @@ import { Report } from './entities/report.entity';
       ElectionAdminProfile,
       ElectionAdminContact,
       Party,
-      Report,
+      ReportIssue,
     ]),
   ],
   controllers: [ElectionAdminController],
