@@ -7,6 +7,7 @@ import { ElectionAdminProfile } from './entities/election-admin-profile.entity';
 import { Repository } from 'typeorm';
 import { ElectionAdmin } from './entities/election-admin.entity';
 import * as bcrypt from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class ElectionAdminService {
@@ -17,6 +18,7 @@ export class ElectionAdminService {
     private readonly profileRepository: Repository<ElectionAdminProfile>,
     @InjectRepository(ElectionAdminContact)
     private readonly contactRepository: Repository<ElectionAdminContact>,
+    private readonly jwtService: JwtService,
   ) {}
 
   async createElectionAdmin(
