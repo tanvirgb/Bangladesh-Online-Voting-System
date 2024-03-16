@@ -7,21 +7,30 @@ import {
   Param,
   Delete,
   ValidationPipe,
+  UseGuards,
+  Request,
 } from '@nestjs/common';
 import { ElectionAdminService } from './election-admin.service';
 import { CreateElectionAdminDto } from './dto/create-election-admin.dto';
 import { UpdateElectionAdminDto } from './dto/update-election-admin.dto';
 import { ElectionAdmin } from './entities/election-admin.entity';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('election-admin')
 export class ElectionAdminController {
   constructor(private readonly electionAdminService: ElectionAdminService) {}
 
-  @Post('/registration')
+  @Post('registration')
   async createElectionAdmin(
-    @Body(new ValidationPipe()) createAdminDto: CreateElectionAdminDto,
-  ): Promise<ElectionAdmin> {
-    return await this.electionAdminService.createElectionAdmin(createAdminDto);
+    @Body(new ValidationPipe()) registrationDto: CreateElectionAdminDto,
+  ): Promise<{ message: string; newElectionAdmin: ElectionAdmin }> {
+    return await this.electionAdminService.createElectionAdmin(registrationDto);
+  }
+
+  @Post('login')
+  @UseGuards(AuthGuard('local'))
+  login(@Request() req): string {
+    return req.user;
   }
 
   @Get()

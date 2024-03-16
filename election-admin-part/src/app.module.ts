@@ -4,10 +4,12 @@ import { AppService } from './app.service';
 import { ElectionAdminModule } from './election-admin/election-admin.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AuthModule } from './election-admin/auth/auth.module';
 
 @Module({
   imports: [
     ElectionAdminModule,
+    AuthModule,
     ConfigModule.forRoot({ isGlobal: true, envFilePath: '.env.local' }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],

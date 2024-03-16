@@ -20,5 +20,6 @@ import { ReportIssue } from './entities/report.entity';
   ],
   controllers: [ElectionAdminController],
   providers: [ElectionAdminService],
+  exports: [ElectionAdminService],
 })
 export class ElectionAdminModule {}

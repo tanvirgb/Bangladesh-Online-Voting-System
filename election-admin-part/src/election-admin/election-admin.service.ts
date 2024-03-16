@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateElectionAdminDto } from './dto/create-election-admin.dto';
 import { UpdateElectionAdminDto } from './dto/update-election-admin.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -20,35 +20,44 @@ export class ElectionAdminService {
   ) {}
 
   async createElectionAdmin(
-    createElectionAdminDto: CreateElectionAdminDto,
-  ): Promise<ElectionAdmin> {
+    registrationDto: CreateElectionAdminDto,
+  ): Promise<{ message: string; newElectionAdmin: ElectionAdmin }> {
     const adminProfile = new ElectionAdminProfile();
-    adminProfile.name = createElectionAdminDto.name;
-    adminProfile.address = createElectionAdminDto.address;
-    adminProfile.email = createElectionAdminDto.email;
-    adminProfile.gender = createElectionAdminDto.gender;
-    adminProfile.religion = createElectionAdminDto.religion;
+    adminProfile.name = registrationDto.name;
+    adminProfile.address = registrationDto.address;
+    adminProfile.email = registrationDto.email;
+    adminProfile.gender = registrationDto.gender;
+    adminProfile.religion = registrationDto.religion;
 
     const savedProfile = await this.profileRepository.save(adminProfile);
 
     const adminContact = new ElectionAdminContact();
-    adminContact.contact = createElectionAdminDto.contact;
+    adminContact.contact = registrationDto.contact;
     adminContact.admin = savedProfile.admin;
     const savedContact = await this.contactRepository.save(adminContact);
 
     const admin = new ElectionAdmin();
-    admin.username = createElectionAdminDto.username;
-    const hashedPassword = await bcrypt.hash(
-      createElectionAdminDto.password,
-      10,
-    );
+    admin.username = registrationDto.username;
+    const hashedPassword = await bcrypt.hash(registrationDto.password, 10);
 
     admin.password = hashedPassword;
-    admin.nid = createElectionAdminDto.nid;
+    admin.nid = registrationDto.nid;
     admin.profile = savedProfile;
     admin.contacts = [savedContact];
 
-    return await this.adminRepository.save(admin);
+    const savedAdmin = await this.adminRepository.save(admin);
+
+    if (!savedAdmin) {
+      throw new NotFoundException('Registration failed');
+    }
+    return {
+      message: 'Registration successful!',
+      newElectionAdmin: savedAdmin,
+    };
+  }
+
+  async findByUsername(username: string): Promise<ElectionAdmin | undefined> {
+    return await this.adminRepository.findOne({ where: { username } });
   }
 
   findAll() {
