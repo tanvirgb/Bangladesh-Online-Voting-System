@@ -12,6 +12,8 @@ import {
   UploadedFile,
   UseInterceptors,
   Res,
+  NotFoundException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { ElectionAdminService } from './election-admin.service';
 import { CreateElectionAdminDto } from './dto/create-election-admin.dto';
@@ -81,6 +83,17 @@ export class ElectionAdminController {
   @Get('getimage/:name')
   getImages(@Param('name') name, @Res() res) {
     res.sendFile(name, { root: './uploads' });
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get('search/election-admin/:id')
+  async getAdminProfile(@Param('id') id: number): Promise<ElectionAdmin> {
+    const admin = await this.adminService.getAdminProfile(id);
+    if (!admin) {
+      throw new NotFoundException('Admin not found');
+    }
+
+    return admin;
   }
 
   @Get()

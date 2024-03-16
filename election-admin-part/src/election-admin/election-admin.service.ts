@@ -62,6 +62,22 @@ export class ElectionAdminService {
     return await this.adminRepository.findOne({ where: { username } });
   }
 
+  async getAdminProfile(id: number): Promise<any> {
+    const admin = await this.adminRepository.findOne({
+      where: { id },
+      relations: ['profile', 'contacts'],
+    });
+    if (!admin) {
+      throw new NotFoundException('Admin not found');
+    }
+
+    const { profile, contacts } = admin;
+    const { name, email } = profile;
+    const contact = contacts[0]?.contact;
+
+    return { name, email, contact };
+  }
+
   findAll() {
     return `This action returns all electionAdmin`;
   }
