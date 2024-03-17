@@ -15,7 +15,7 @@ export class Party {
   @Generated('uuid')
   uniqueId: string;
 
-  @Column({ length: 200 })
+  @Column({ length: 200, unique: true })
   partyName: string;
 
   @Column({ length: 150 })

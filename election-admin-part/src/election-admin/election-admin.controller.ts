@@ -26,6 +26,7 @@ import { MulterError, diskStorage } from 'multer';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CreatePartyDto } from './dto/create-party.dto';
 import { Party } from './entities/party.entity';
+import { UpdatePartyDto } from './dto/update-party.dto';
 
 @Controller('election-admin')
 export class ElectionAdminController {
@@ -83,14 +84,14 @@ export class ElectionAdminController {
     return 'File successfully uploaded!';
   }
 
-  @UseGuards(AuthGuard('jwt'))
   @Get('get-image/:name')
+  @UseGuards(AuthGuard('jwt'))
   getImages(@Param('name') name, @Res() res) {
     res.sendFile(name, { root: './uploads' });
   }
 
-  @UseGuards(AuthGuard('jwt'))
   @Post('search/election-admin')
+  @UseGuards(AuthGuard('jwt'))
   async getAdminProfile(
     @Body('username') username: string,
   ): Promise<ElectionAdmin> {
@@ -114,8 +115,8 @@ export class ElectionAdminController {
     return profile;
   }
 
-  @UseGuards(AuthGuard('jwt'))
   @Put('update-profile')
+  @UseGuards(AuthGuard('jwt'))
   async updateAdmin(
     @Body(new ValidationPipe()) updateDto: UpdateElectionAdminDto,
     @Req() req: any,
@@ -131,12 +132,20 @@ export class ElectionAdminController {
     return updatedAdmin;
   }
 
-  @UseGuards(AuthGuard('jwt'))
   @Post('add-party')
+  @UseGuards(AuthGuard('jwt'))
   async addParty(
     @Body(new ValidationPipe()) addedDto: CreatePartyDto,
   ): Promise<{ message: string; party: Party }> {
     return await this.adminService.addParty(addedDto);
+  }
+
+  @Put('update-party')
+  async updateParty(
+    @Body('partyName') partyName: string,
+    @Body() updateDto: UpdatePartyDto,
+  ): Promise<{ message: string; party: Party }> {
+    return await this.adminService.updateParty(partyName, updateDto);
   }
 
   @Get()

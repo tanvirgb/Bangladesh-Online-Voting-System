@@ -10,6 +10,7 @@ import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { Party } from './entities/party.entity';
 import { CreatePartyDto } from './dto/create-party.dto';
+import { UpdatePartyDto } from './dto/update-party.dto';
 
 @Injectable()
 export class ElectionAdminService {
@@ -143,6 +144,29 @@ export class ElectionAdminService {
     return {
       message: 'Adding successful!',
       party: addedParty,
+    };
+  }
+
+  async updateParty(
+    partyName: string,
+    updateDto: UpdatePartyDto,
+  ): Promise<{ message: string; party: Party }> {
+    const party = await this.partyRepository.findOne({ where: { partyName } });
+
+    if (!party) {
+      throw new NotFoundException('Party not found');
+    }
+
+    party.partyLeader = updateDto.partyLeader;
+    party.partyDescription = updateDto.partyDescription;
+    party.foundingDate = updateDto.foundingDate;
+    party.contact = updateDto.contact;
+
+    const updatedParty = await this.partyRepository.save(party);
+
+    return {
+      message: 'Update successfully!',
+      party: updatedParty,
     };
   }
 
