@@ -88,7 +88,7 @@ export class ElectionAdminService {
   async updateElectionAdmin(
     id: number,
     updateDto: UpdateElectionAdminDto,
-  ): Promise<ElectionAdmin | null> {
+  ): Promise<{ message: string; updateElectionAdmin: ElectionAdmin }> {
     const existingAdmin = await this.adminRepository.findOne({
       where: { id },
       relations: ['profile'],
@@ -99,7 +99,10 @@ export class ElectionAdminService {
 
     existingAdmin.username = updateDto.username;
     existingAdmin.nid = updateDto.nid;
-    existingAdmin.password = updateDto.password;
+
+    const hashedPassword = await bcrypt.hash(updateDto.password, 10);
+
+    existingAdmin.password = hashedPassword;
 
     existingAdmin.profile.name = updateDto.name;
     existingAdmin.profile.address = updateDto.address;
@@ -107,7 +110,15 @@ export class ElectionAdminService {
     existingAdmin.profile.gender = updateDto.gender;
     existingAdmin.profile.religion = updateDto.religion;
 
-    return this.adminRepository.save(existingAdmin);
+    const updatedAdmin = await this.adminRepository.save(existingAdmin);
+
+    if (!updatedAdmin) {
+      throw new NotFoundException('Registration failed');
+    }
+    return {
+      message: 'Update successful!',
+      updateElectionAdmin: updatedAdmin,
+    };
   }
 
   findAll() {

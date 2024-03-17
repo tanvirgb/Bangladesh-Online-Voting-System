@@ -14,6 +14,7 @@ import {
   Res,
   NotFoundException,
   Put,
+  Req,
 } from '@nestjs/common';
 import { ElectionAdminService } from './election-admin.service';
 import { CreateElectionAdminDto } from './dto/create-election-admin.dto';
@@ -111,13 +112,14 @@ export class ElectionAdminController {
   }
 
   @UseGuards(AuthGuard('jwt'))
-  @Put('update-profile/:id')
+  @Put('update-profile')
   async updateAdmin(
-    @Param('id') id: number,
-    @Body() updateDto: UpdateElectionAdminDto,
-  ): Promise<ElectionAdmin | null> {
+    @Body(new ValidationPipe()) updateDto: UpdateElectionAdminDto,
+    @Req() req: any,
+  ): Promise<{ message: string; updateElectionAdmin: ElectionAdmin }> {
+    const admin = req.user;
     const updatedAdmin = await this.adminService.updateElectionAdmin(
-      id,
+      admin.id,
       updateDto,
     );
     if (!updatedAdmin) {
