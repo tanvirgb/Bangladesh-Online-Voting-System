@@ -62,9 +62,9 @@ export class ElectionAdminService {
     return await this.adminRepository.findOne({ where: { username } });
   }
 
-  async getAdminProfile(id: number): Promise<any> {
+  async getAdminProfileByUsername(username: string): Promise<any> {
     const admin = await this.adminRepository.findOne({
-      where: { id },
+      where: { username },
       relations: ['profile', 'contacts'],
     });
     if (!admin) {
