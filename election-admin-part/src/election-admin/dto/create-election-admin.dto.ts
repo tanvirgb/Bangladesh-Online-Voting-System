@@ -1,5 +1,7 @@
 import {
   IsEmail,
+  IsMobilePhone,
+  IsNotEmpty,
   IsString,
   Matches,
   MaxLength,
@@ -43,7 +45,8 @@ export class CreateElectionAdminDto {
   @MaxLength(249, { message: 'Address cannot be longer than 249 characters' })
   readonly address: string;
 
-  @IsString({ message: 'Contact must be valid' })
+  @IsNotEmpty({ message: 'Contact must not be empty' })
+  @IsMobilePhone('bn-BD')
   readonly contact: string;
 
   @IsEmail({}, { message: 'Email must be valid' })
