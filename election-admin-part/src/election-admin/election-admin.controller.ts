@@ -13,6 +13,7 @@ import {
   UseInterceptors,
   Res,
   NotFoundException,
+  Put,
 } from '@nestjs/common';
 import { ElectionAdminService } from './election-admin.service';
 import { CreateElectionAdminDto } from './dto/create-election-admin.dto';
@@ -22,7 +23,6 @@ import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth/auth.service';
 import { MulterError, diskStorage } from 'multer';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ElectionAdminProfile } from './entities/election-admin-profile.entity';
 
 @Controller('election-admin')
 export class ElectionAdminController {
@@ -108,6 +108,22 @@ export class ElectionAdminController {
     }
     const { password, ...profile } = ownProfile;
     return profile;
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Put('update-profile/:id')
+  async updateAdmin(
+    @Param('id') id: number,
+    @Body() updateDto: UpdateElectionAdminDto,
+  ): Promise<ElectionAdmin | null> {
+    const updatedAdmin = await this.adminService.updateElectionAdmin(
+      id,
+      updateDto,
+    );
+    if (!updatedAdmin) {
+      throw new NotFoundException('Admin profile not found');
+    }
+    return updatedAdmin;
   }
 
   @Get()

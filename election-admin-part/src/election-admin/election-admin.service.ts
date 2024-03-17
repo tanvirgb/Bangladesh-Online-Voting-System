@@ -85,6 +85,31 @@ export class ElectionAdminService {
     });
   }
 
+  async updateElectionAdmin(
+    id: number,
+    updateDto: UpdateElectionAdminDto,
+  ): Promise<ElectionAdmin | null> {
+    const existingAdmin = await this.adminRepository.findOne({
+      where: { id },
+      relations: ['profile'],
+    });
+    if (!existingAdmin) {
+      throw new NotFoundException('Admin not found');
+    }
+
+    existingAdmin.username = updateDto.username;
+    existingAdmin.nid = updateDto.nid;
+    existingAdmin.password = updateDto.password;
+
+    existingAdmin.profile.name = updateDto.name;
+    existingAdmin.profile.address = updateDto.address;
+    existingAdmin.profile.email = updateDto.email;
+    existingAdmin.profile.gender = updateDto.gender;
+    existingAdmin.profile.religion = updateDto.religion;
+
+    return this.adminRepository.save(existingAdmin);
+  }
+
   findAll() {
     return `This action returns all electionAdmin`;
   }

@@ -7,42 +7,46 @@ import {
 } from 'class-validator';
 
 export class CreateElectionAdminDto {
-  @IsString()
+  @IsString({ message: 'Username must consist of letters and numbers' })
   @MinLength(5, { message: 'Username must be at least 5 characters long' })
   @MaxLength(30, { message: 'Username cannot be longer than 30 characters' })
   @Matches(/^[a-zA-Z0-9]+$/, {
-    message: 'Username can only contain alphanumeric characters',
+    message:
+      'Username can only contain alphanumeric characters (letters and numbers)',
   })
   readonly username: string;
 
+  @IsString({
+    message:
+      'Password must consist of letters, numbers, and special characters (!@#$%^&*)',
+  })
   @MinLength(8, { message: 'Password must be at least 8 characters long' })
   @MaxLength(30, { message: 'Password cannot be longer than 30 characters' })
-  @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/, {
-    message:
-      'Password must contain at least one uppercase letter, one lowercase letter, and one number',
-  })
-  @IsString()
+  @Matches(
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[a-zA-Z\d!@#$%^&*]{8,}$/,
+    {
+      message:
+        'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character (!@#$%^&*)',
+    },
+  )
   readonly password: string;
 
-  @IsString({ message: 'NID must be a string' })
+  @IsString({ message: 'NID must be valid' })
   @MaxLength(69, { message: 'NID cannot be longer than 69 characters' })
   readonly nid: string;
 
-  @IsString({ message: 'Name must be a string' })
+  @IsString({ message: 'Name must consist of letters' })
   @MaxLength(149, { message: 'Name cannot be longer than 149 characters' })
-  @IsString()
   readonly name: string;
 
+  @IsString({ message: 'Address must consist of letters' })
   @MaxLength(249, { message: 'Address cannot be longer than 249 characters' })
-  @IsString()
   readonly address: string;
 
-  @MaxLength(24, { message: 'Contact cannot be longer than 24 characters' })
-  @IsString()
+  @IsString({ message: 'Contact must be valid' })
   readonly contact: string;
 
-  @IsEmail({}, { message: 'Invalid email format' })
-  @MaxLength(70, { message: 'Email cannot be longer than 70 characters' })
+  @IsEmail({}, { message: 'Email must be valid' })
   @IsString()
   readonly email: string;
 
