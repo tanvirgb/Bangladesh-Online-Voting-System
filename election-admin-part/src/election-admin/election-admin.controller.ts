@@ -24,6 +24,8 @@ import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth/auth.service';
 import { MulterError, diskStorage } from 'multer';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { CreatePartyDto } from './dto/create-party.dto';
+import { Party } from './entities/party.entity';
 
 @Controller('election-admin')
 export class ElectionAdminController {
@@ -127,6 +129,14 @@ export class ElectionAdminController {
       throw new NotFoundException('Admin profile not found');
     }
     return updatedAdmin;
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Post('add-party')
+  async addParty(
+    @Body(new ValidationPipe()) addedDto: CreatePartyDto,
+  ): Promise<{ message: string; party: Party }> {
+    return await this.adminService.addParty(addedDto);
   }
 
   @Get()
