@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateElectionAdminDto } from './dto/create-election-admin.dto';
 import { UpdateElectionAdminDto } from './dto/update-election-admin.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -88,7 +92,7 @@ export class ElectionAdminService {
   async updateElectionAdmin(
     id: number,
     updateDto: UpdateElectionAdminDto,
-  ): Promise<{ message: string; updateElectionAdmin: ElectionAdmin }> {
+  ): Promise<{ message: string; personalDetails: ElectionAdmin }> {
     const existingAdmin = await this.adminRepository.findOne({
       where: { id },
       relations: ['profile'],
@@ -117,7 +121,7 @@ export class ElectionAdminService {
     }
     return {
       message: 'Update successful!',
-      updateElectionAdmin: updatedAdmin,
+      personalDetails: updatedAdmin,
     };
   }
 

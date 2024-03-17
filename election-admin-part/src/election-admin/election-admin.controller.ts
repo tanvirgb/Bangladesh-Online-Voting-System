@@ -81,7 +81,7 @@ export class ElectionAdminController {
   }
 
   @UseGuards(AuthGuard('jwt'))
-  @Get('getimage/:name')
+  @Get('get-image/:name')
   getImages(@Param('name') name, @Res() res) {
     res.sendFile(name, { root: './uploads' });
   }
@@ -116,7 +116,7 @@ export class ElectionAdminController {
   async updateAdmin(
     @Body(new ValidationPipe()) updateDto: UpdateElectionAdminDto,
     @Req() req: any,
-  ): Promise<{ message: string; updateElectionAdmin: ElectionAdmin }> {
+  ): Promise<{ message: string; personalDetails: ElectionAdmin }> {
     const admin = req.user;
     const updatedAdmin = await this.adminService.updateElectionAdmin(
       admin.id,

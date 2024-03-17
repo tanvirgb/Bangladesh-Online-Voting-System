@@ -16,11 +16,9 @@ export class ElectionAdminContact {
   @Generated('uuid')
   uniqueId: string;
 
-  @Column({ length: 25 })
+  @Column({ length: 500 })
   contact: string;
 
-  @ManyToOne(() => ElectionAdmin, (admin) => admin.contacts, {
-    
-  })
+  @ManyToOne(() => ElectionAdmin, (admin) => admin.contacts)
   admin: ElectionAdmin;
 }
