@@ -35,9 +35,10 @@ export class ElectionAdminController {
   @Post('registration')
   async createElectionAdmin(
     @Body(new ValidationPipe()) registrationDto: CreateElectionAdminDto,
-  ): Promise<{ message: string; newElectionAdmin: ElectionAdmin }> {
+  ): Promise<{ message: string; yourProfile: ElectionAdmin }> {
     return await this.adminService.createElectionAdmin(registrationDto);
   }
+
   @Post('login')
   @UseGuards(AuthGuard('local'))
   login(@Request() req): string {

@@ -5,7 +5,6 @@ import {
   Generated,
   OneToMany,
 } from 'typeorm';
-import { PartyContact } from './party-contact.entity';
 
 @Entity()
 export class Party {
@@ -28,8 +27,6 @@ export class Party {
   @Column({ length: 70 })
   foundingDate: string;
 
-  @OneToMany(() => PartyContact, (contact) => contact.party, {
-    cascade: true,
-  })
-  contacts: PartyContact[];
+  @Column({ length: 25 })
+  contact: string;
 }

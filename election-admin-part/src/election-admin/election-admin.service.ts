@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateElectionAdminDto } from './dto/create-election-admin.dto';
 import { UpdateElectionAdminDto } from './dto/update-election-admin.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -30,7 +26,7 @@ export class ElectionAdminService {
 
   async createElectionAdmin(
     registrationDto: CreateElectionAdminDto,
-  ): Promise<{ message: string; newElectionAdmin: ElectionAdmin }> {
+  ): Promise<{ message: string; yourProfile: ElectionAdmin }> {
     const adminProfile = new ElectionAdminProfile();
     adminProfile.name = registrationDto.name;
     adminProfile.address = registrationDto.address;
@@ -61,7 +57,7 @@ export class ElectionAdminService {
     }
     return {
       message: 'Registration successful!',
-      newElectionAdmin: savedAdmin,
+      yourProfile: savedAdmin,
     };
   }
 
