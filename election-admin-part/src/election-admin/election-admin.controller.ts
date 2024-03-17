@@ -141,11 +141,26 @@ export class ElectionAdminController {
   }
 
   @Put('update-party')
+  @UseGuards(AuthGuard('jwt'))
   async updateParty(
     @Body('partyName') partyName: string,
     @Body() updateDto: UpdatePartyDto,
   ): Promise<{ message: string; party: Party }> {
     return await this.adminService.updateParty(partyName, updateDto);
+  }
+
+  @Post('search-party')
+  async findPartyByUsername(
+    @Body('partyName') partyName: string,
+  ): Promise<Party> {
+    return this.adminService.findPartyByUsername(partyName);
+  }
+
+  @Delete('delete-party')
+  async deleteParty(
+    @Body('partyName') partyName: string,
+  ): Promise<{ message: string }> {
+    return this.adminService.deletePartyByName(partyName);
   }
 
   @Get()

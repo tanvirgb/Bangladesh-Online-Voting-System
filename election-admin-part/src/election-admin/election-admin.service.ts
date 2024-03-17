@@ -165,8 +165,26 @@ export class ElectionAdminService {
     const updatedParty = await this.partyRepository.save(party);
 
     return {
-      message: 'Update successfully!',
+      message: 'Update successful!',
       party: updatedParty,
+    };
+  }
+
+  async findPartyByUsername(partyName: string): Promise<Party> {
+    return this.partyRepository.findOne({ where: { partyName } });
+  }
+
+  async deletePartyByName(partyName: string): Promise<{ message: string }> {
+    const party = await this.partyRepository.findOne({ where: { partyName } });
+
+    if (!party) {
+      throw new NotFoundException('Party not found');
+    }
+
+    await this.partyRepository.remove(party);
+
+    return {
+      message: 'Delete successful!',
     };
   }
 
