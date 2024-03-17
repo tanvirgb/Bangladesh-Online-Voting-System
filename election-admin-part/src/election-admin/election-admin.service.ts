@@ -78,6 +78,13 @@ export class ElectionAdminService {
     return { name, email, contact };
   }
 
+  async getOwnProfileById(id: number): Promise<ElectionAdmin> {
+    return this.adminRepository.findOne({
+      where: { id },
+      relations: ['profile', 'contacts'],
+    });
+  }
+
   findAll() {
     return `This action returns all electionAdmin`;
   }

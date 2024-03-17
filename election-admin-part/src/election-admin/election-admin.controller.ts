@@ -98,6 +98,18 @@ export class ElectionAdminController {
     return admin;
   }
 
+  @UseGuards(AuthGuard('jwt'))
+  @Get('view-profile')
+  async getOwnProfile(@Request() req): Promise<any> {
+    const ownId = req.user.id;
+    const ownProfile = await this.adminService.getOwnProfileById(ownId);
+    if (!ownProfile) {
+      throw new NotFoundException('Your profile not found');
+    }
+    const { password, ...profile } = ownProfile;
+    return profile;
+  }
+
   @Get()
   findAll() {
     return this.adminService.findAll();
