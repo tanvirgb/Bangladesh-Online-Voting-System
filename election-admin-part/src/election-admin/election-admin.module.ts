@@ -7,7 +7,6 @@ import { ElectionAdminContact } from './entities/election-admin-contact.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Party } from './entities/party.entity';
 import { ReportIssue } from './entities/report.entity';
-import { JwtService } from '@nestjs/jwt';
 import { AuthService } from './auth/auth.service';
 
 @Module({

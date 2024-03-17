@@ -5,6 +5,7 @@ import { ElectionAdminModule } from '../election-admin.module';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './jwt.strategy';
+import { jwtConstants } from './constants';
 
 @Module({
   imports: [
@@ -12,7 +13,7 @@ import { JwtStrategy } from './jwt.strategy';
     ElectionAdminModule,
     JwtModule.register({
       global: true,
-      secret: 'key',
+      secret: jwtConstants.secret,
       signOptions: {
         expiresIn: '1h',
       },

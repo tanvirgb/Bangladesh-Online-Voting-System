@@ -50,7 +50,7 @@ export class CreateElectionAdminDto {
   @IsString()
   readonly gender: string;
 
-  @MaxLength(29, { message: 'Gender cannot be longer than 29 characters' })
+  @MaxLength(29, { message: 'Religion cannot be longer than 29 characters' })
   @IsString()
   readonly religion: string;
 }
