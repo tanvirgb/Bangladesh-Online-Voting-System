@@ -12,7 +12,7 @@ import { jwtConstants } from './constants';
     PassportModule,
     ElectionAdminModule,
     JwtModule.register({
-      global: true,
+      global: jwtConstants.global,
       secret: jwtConstants.secret,
       signOptions: {
         expiresIn: '1h',
