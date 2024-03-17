@@ -9,15 +9,18 @@ export class Party {
   @Generated('uuid')
   uniqueId: string;
 
-  @Column({ default: 'partyName', length: 200 })
+  @Column({ length: 200 })
   partyName: string;
 
-  @Column({ default: 'foundingDate', length: 70 })
-  foundingDate: string;
+  @Column({ length: 150 })
+  partyLeader: string;
 
-  @Column({ default: 'partyDescription', length: 1000 })
+  @Column({ length: 1000 })
   partyDescription: string;
 
-  @Column({ default: 'partyLeader', length: 150 })
-  partyLeader: string;
+  @Column({ length: 70 })
+  foundingDate: string;
+
+  @Column({ length: 25 })
+  contact: string;
 }

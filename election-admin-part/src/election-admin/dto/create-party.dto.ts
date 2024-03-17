@@ -1,31 +1,41 @@
-import { IsNotEmpty, IsString, MaxLength } from 'class-validator';
+import {
+  IsMobilePhone,
+  IsNotEmpty,
+  IsString,
+  MaxLength,
+} from 'class-validator';
 
 export class CreatePartyDto {
-  @IsNotEmpty({ message: 'Party name must not be empty' })
-  @IsString({ message: 'Party name must be a string' })
-  @MaxLength(200, {
-    message: 'Party name cannot be longer than 200 characters',
+  @MaxLength(199, {
+    message: 'Party name cannot be longer than 199 characters',
   })
+  @IsString({ message: 'Party name must consist of characters' })
+  @IsNotEmpty({ message: 'Party Name field must not be empty' })
   readonly partyName: string;
 
-  @IsNotEmpty({ message: 'Founding date must not be empty' })
-  @IsString({ message: 'Founding date must be a string' })
-  @MaxLength(70, {
-    message: 'Founding date cannot be longer than 70 characters',
+  @MaxLength(149, {
+    message: 'Party Leader Name cannot be longer than 149 characters',
   })
-  readonly foundingDate: string;
+  @IsString({ message: 'Party Leader Name must consist of characters' })
+  @IsNotEmpty({ message: 'Party Leader field must not be empty' })
+  readonly partyLeader: string;
 
-  @IsNotEmpty({ message: 'Party description must not be empty' })
-  @IsString({ message: 'Party description must be a string' })
-  @MaxLength(1000, {
-    message: 'Party description cannot be longer than 1000 characters',
+  @MaxLength(999, {
+    message: 'Party Description cannot be longer than 999 characters',
   })
+  @IsString({ message: 'Party Description must consist of characters' })
+  @IsNotEmpty({ message: 'Party Description field must not be empty' })
   readonly partyDescription: string;
 
-  @IsNotEmpty({ message: 'Party leader must not be empty' })
-  @IsString({ message: 'Party leader must be a string' })
-  @MaxLength(150, {
-    message: 'Party leader name cannot be longer than 150 characters',
+  @MaxLength(69, {
+    message: 'Founding Date cannot be longer than 69 characters',
   })
-  readonly partyLeader: string;
+  @IsString({ message: 'Founding Date must consist of characters' })
+  @IsNotEmpty({ message: 'Founding Date must not be empty' })
+  readonly foundingDate: string;
+
+  @MaxLength(24, { message: 'Contact cannot be longer than 24 digits' })
+  @IsMobilePhone('bn-BD')
+  @IsNotEmpty({ message: 'Contact must not be empty' })
+  readonly contact: string;
 }
