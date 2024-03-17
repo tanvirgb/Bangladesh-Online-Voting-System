@@ -67,29 +67,6 @@ export class ElectionAdminService {
     return await this.adminRepository.findOne({ where: { username } });
   }
 
-  async getAdminProfileByUsername(username: string): Promise<any> {
-    const admin = await this.adminRepository.findOne({
-      where: { username },
-      relations: ['profile', 'contacts'],
-    });
-    if (!admin) {
-      throw new NotFoundException('Admin not found');
-    }
-
-    const { profile, contacts } = admin;
-    const { name, email } = profile;
-    const contact = contacts[0]?.contact;
-
-    return { name, email, contact };
-  }
-
-  async getOwnProfileById(id: number): Promise<ElectionAdmin> {
-    return this.adminRepository.findOne({
-      where: { id },
-      relations: ['profile', 'contacts'],
-    });
-  }
-
   async updateElectionAdmin(
     id: number,
     updateDto: UpdateElectionAdminDto,
@@ -124,6 +101,29 @@ export class ElectionAdminService {
       message: 'Update successful!',
       personalDetails: updatedAdmin,
     };
+  }
+
+  async getOwnProfileById(id: number): Promise<ElectionAdmin> {
+    return this.adminRepository.findOne({
+      where: { id },
+      relations: ['profile', 'contacts'],
+    });
+  }
+
+  async getAdminProfileByUsername(username: string): Promise<any> {
+    const admin = await this.adminRepository.findOne({
+      where: { username },
+      relations: ['profile', 'contacts'],
+    });
+    if (!admin) {
+      throw new NotFoundException('Admin not found');
+    }
+
+    const { profile, contacts } = admin;
+    const { name, email } = profile;
+    const contact = contacts[0]?.contact;
+
+    return { name, email, contact };
   }
 
   async addParty(
@@ -174,7 +174,7 @@ export class ElectionAdminService {
     return this.partyRepository.findOne({ where: { partyName } });
   }
 
-  async deletePartyByName(partyName: string): Promise<{ message: string }> {
+  async removePartyByName(partyName: string): Promise<{ message: string }> {
     const party = await this.partyRepository.findOne({ where: { partyName } });
 
     if (!party) {

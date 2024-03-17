@@ -35,13 +35,6 @@ export class ElectionAdminController {
     private readonly authService: AuthService,
   ) {}
 
-  @Post('registration')
-  async createElectionAdmin(
-    @Body(new ValidationPipe()) registrationDto: CreateElectionAdminDto,
-  ): Promise<{ message: string; yourProfile: ElectionAdmin }> {
-    return await this.adminService.createElectionAdmin(registrationDto);
-  }
-
   @Post('login')
   @UseGuards(AuthGuard('local'))
   login(@Request() req): string {
@@ -59,7 +52,14 @@ export class ElectionAdminController {
     return this.authService.generateToken(electionAdmin);
   }
 
-  @Post('upload')
+  @Post('registration')
+  async createElectionAdmin(
+    @Body(new ValidationPipe()) registrationDto: CreateElectionAdminDto,
+  ): Promise<{ message: string; yourProfile: ElectionAdmin }> {
+    return await this.adminService.createElectionAdmin(registrationDto);
+  }
+
+  @Post('upload-profile-picture')
   @UseGuards(AuthGuard('jwt'))
   @UseInterceptors(
     FileInterceptor('file', {
@@ -84,25 +84,6 @@ export class ElectionAdminController {
     return 'File successfully uploaded!';
   }
 
-  @Get('get-image/:name')
-  @UseGuards(AuthGuard('jwt'))
-  getImages(@Param('name') name, @Res() res) {
-    res.sendFile(name, { root: './uploads' });
-  }
-
-  @Post('search/election-admin')
-  @UseGuards(AuthGuard('jwt'))
-  async getAdminProfile(
-    @Body('username') username: string,
-  ): Promise<ElectionAdmin> {
-    const admin = await this.adminService.getAdminProfileByUsername(username);
-    if (!admin) {
-      throw new NotFoundException('Admin not found');
-    }
-
-    return admin;
-  }
-
   @UseGuards(AuthGuard('jwt'))
   @Get('view-profile')
   async getOwnProfile(@Request() req): Promise<any> {
@@ -113,6 +94,12 @@ export class ElectionAdminController {
     }
     const { password, ...profile } = ownProfile;
     return profile;
+  }
+
+  @Get('view-profile-picture/:name')
+  @UseGuards(AuthGuard('jwt'))
+  getImages(@Param('name') name, @Res() res) {
+    res.sendFile(name, { root: './uploads' });
   }
 
   @Put('update-profile')
@@ -132,6 +119,19 @@ export class ElectionAdminController {
     return updatedAdmin;
   }
 
+  @Post('search-election-admin')
+  @UseGuards(AuthGuard('jwt'))
+  async getAdminProfile(
+    @Body('username') username: string,
+  ): Promise<ElectionAdmin> {
+    const admin = await this.adminService.getAdminProfileByUsername(username);
+    if (!admin) {
+      throw new NotFoundException('Admin not found');
+    }
+
+    return admin;
+  }
+
   @Post('add-party')
   @UseGuards(AuthGuard('jwt'))
   async addParty(
@@ -141,7 +141,6 @@ export class ElectionAdminController {
   }
 
   @Put('update-party')
-  @UseGuards(AuthGuard('jwt'))
   async updateParty(
     @Body('partyName') partyName: string,
     @Body() updateDto: UpdatePartyDto,
@@ -150,17 +149,19 @@ export class ElectionAdminController {
   }
 
   @Post('search-party')
+  @UseGuards(AuthGuard('jwt'))
   async findPartyByUsername(
     @Body('partyName') partyName: string,
   ): Promise<Party> {
     return this.adminService.findPartyByUsername(partyName);
   }
 
-  @Delete('delete-party')
+  @Delete('remove-party')
+  @UseGuards(AuthGuard('jwt'))
   async deleteParty(
     @Body('partyName') partyName: string,
   ): Promise<{ message: string }> {
-    return this.adminService.deletePartyByName(partyName);
+    return this.adminService.removePartyByName(partyName);
   }
 
   @Get()
