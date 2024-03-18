@@ -59,6 +59,41 @@ export class ElectionAdminController {
     return await this.adminService.createElectionAdmin(registrationDto);
   }
 
+  @UseGuards(AuthGuard('jwt'))
+  @Get('view-profile')
+  async getOwnProfile(@Request() req): Promise<any> {
+    const ownId = req.user.id;
+    const ownProfile = await this.adminService.getOwnProfileById(ownId);
+    if (!ownProfile) {
+      throw new NotFoundException('Your profile not found');
+    }
+    const { password, ...profile } = ownProfile;
+    return profile;
+  }
+
+  @Put('update-profile')
+  @UseGuards(AuthGuard('jwt'))
+  async updateAdmin(
+    @Body(new ValidationPipe()) updateDto: UpdateElectionAdminDto,
+    @Req() req: any,
+  ): Promise<{ message: string; personalDetails: ElectionAdmin }> {
+    const admin = req.user;
+    const updatedAdmin = await this.adminService.updateElectionAdmin(
+      admin.id,
+      updateDto,
+    );
+    if (!updatedAdmin) {
+      throw new NotFoundException('Admin profile not found');
+    }
+    return updatedAdmin;
+  }
+
+  @Delete('delete-profile/:id')
+  // @UseGuards(AuthGuard('jwt'))
+  async deleteProfile(@Param('id') id: number): Promise<{ message: string }> {
+    return await this.adminService.deleteProfileById(+id);
+  }
+
   @Post('upload-profile-picture')
   @UseGuards(AuthGuard('jwt'))
   @UseInterceptors(
@@ -84,39 +119,10 @@ export class ElectionAdminController {
     return 'File successfully uploaded!';
   }
 
-  @UseGuards(AuthGuard('jwt'))
-  @Get('view-profile')
-  async getOwnProfile(@Request() req): Promise<any> {
-    const ownId = req.user.id;
-    const ownProfile = await this.adminService.getOwnProfileById(ownId);
-    if (!ownProfile) {
-      throw new NotFoundException('Your profile not found');
-    }
-    const { password, ...profile } = ownProfile;
-    return profile;
-  }
-
   @Get('view-profile-picture/:name')
   @UseGuards(AuthGuard('jwt'))
   getImages(@Param('name') name, @Res() res) {
     res.sendFile(name, { root: './uploads' });
-  }
-
-  @Put('update-profile')
-  @UseGuards(AuthGuard('jwt'))
-  async updateAdmin(
-    @Body(new ValidationPipe()) updateDto: UpdateElectionAdminDto,
-    @Req() req: any,
-  ): Promise<{ message: string; personalDetails: ElectionAdmin }> {
-    const admin = req.user;
-    const updatedAdmin = await this.adminService.updateElectionAdmin(
-      admin.id,
-      updateDto,
-    );
-    if (!updatedAdmin) {
-      throw new NotFoundException('Admin profile not found');
-    }
-    return updatedAdmin;
   }
 
   @Post('search-election-admin')
@@ -140,20 +146,20 @@ export class ElectionAdminController {
     return await this.adminService.addParty(addedDto);
   }
 
-  @Put('update-party')
-  async updateParty(
-    @Body('partyName') partyName: string,
-    @Body() updateDto: UpdatePartyDto,
-  ): Promise<{ message: string; party: Party }> {
-    return await this.adminService.updateParty(partyName, updateDto);
-  }
-
   @Post('search-party')
   @UseGuards(AuthGuard('jwt'))
   async findPartyByUsername(
     @Body('partyName') partyName: string,
   ): Promise<Party> {
     return this.adminService.findPartyByUsername(partyName);
+  }
+
+  @Put('update-party')
+  async updateParty(
+    @Body('partyName') partyName: string,
+    @Body() updateDto: UpdatePartyDto,
+  ): Promise<{ message: string; party: Party }> {
+    return await this.adminService.updateParty(partyName, updateDto);
   }
 
   @Delete('remove-party')

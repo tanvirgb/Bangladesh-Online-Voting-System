@@ -26,6 +26,10 @@ export class ElectionAdminService {
     private readonly partyRepository: Repository<Party>,
   ) {}
 
+  async findByUsername(username: string): Promise<ElectionAdmin | undefined> {
+    return await this.adminRepository.findOne({ where: { username } });
+  }
+
   async createElectionAdmin(
     registrationDto: CreateElectionAdminDto,
   ): Promise<{ message: string; yourProfile: ElectionAdmin }> {
@@ -63,8 +67,11 @@ export class ElectionAdminService {
     };
   }
 
-  async findByUsername(username: string): Promise<ElectionAdmin | undefined> {
-    return await this.adminRepository.findOne({ where: { username } });
+  async getOwnProfileById(id: number): Promise<ElectionAdmin> {
+    return this.adminRepository.findOne({
+      where: { id },
+      relations: ['profile', 'contacts'],
+    });
   }
 
   async updateElectionAdmin(
@@ -95,19 +102,32 @@ export class ElectionAdminService {
     const updatedAdmin = await this.adminRepository.save(existingAdmin);
 
     if (!updatedAdmin) {
-      throw new NotFoundException('Registration failed');
+      throw new NotFoundException('Update failed');
     }
     return {
-      message: 'Update successful!',
+      message: 'Your profile has been successfully updated!',
       personalDetails: updatedAdmin,
     };
   }
 
-  async getOwnProfileById(id: number): Promise<ElectionAdmin> {
-    return this.adminRepository.findOne({
+  async deleteProfileById(id: number): Promise<{ message: string }> {
+    const admin = await this.adminRepository.findOne({
       where: { id },
       relations: ['profile', 'contacts'],
     });
+    if (!admin) {
+      throw new NotFoundException('Admin not found');
+    }
+
+    await this.profileRepository.delete(admin.profile.id);
+
+    for (const contact of admin.contacts) {
+      await this.contactRepository.delete(contact.id);
+    }
+
+    await this.adminRepository.delete(id);
+
+    return { message: 'Your profile has been successfully deleted!' };
   }
 
   async getAdminProfileByUsername(username: string): Promise<any> {
@@ -142,9 +162,13 @@ export class ElectionAdminService {
       throw new NotFoundException('Adding failed');
     }
     return {
-      message: 'Adding successful!',
+      message: 'Party successfully added!',
       party: addedParty,
     };
+  }
+
+  async findPartyByUsername(partyName: string): Promise<Party> {
+    return this.partyRepository.findOne({ where: { partyName } });
   }
 
   async updateParty(
@@ -165,13 +189,9 @@ export class ElectionAdminService {
     const updatedParty = await this.partyRepository.save(party);
 
     return {
-      message: 'Update successful!',
+      message: 'Party successfully updated!',
       party: updatedParty,
     };
-  }
-
-  async findPartyByUsername(partyName: string): Promise<Party> {
-    return this.partyRepository.findOne({ where: { partyName } });
   }
 
   async removePartyByName(partyName: string): Promise<{ message: string }> {
@@ -184,7 +204,7 @@ export class ElectionAdminService {
     await this.partyRepository.remove(party);
 
     return {
-      message: 'Delete successful!',
+      message: 'Party successfully deleted!',
     };
   }
 
