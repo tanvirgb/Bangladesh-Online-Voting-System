@@ -11,6 +11,8 @@ import { JwtService } from '@nestjs/jwt';
 import { Party } from './entities/party.entity';
 import { CreatePartyDto } from './dto/create-party.dto';
 import { UpdatePartyDto } from './dto/update-party.dto';
+import path from 'path';
+import * as fs from 'fs';
 
 @Injectable()
 export class ElectionAdminService {
@@ -128,6 +130,17 @@ export class ElectionAdminService {
     await this.adminRepository.delete(id);
 
     return { message: 'Your profile has been successfully deleted!' };
+  }
+
+  async deleteProfilePicture(fileName: string): Promise<{ message: string }> {
+    const profilePicturePath = './uploads/' + fileName;
+
+    if (fs.existsSync(profilePicturePath)) {
+      fs.unlinkSync(profilePicturePath);
+      return { message: 'Profile picture has been deleted successfully!' };
+    } else {
+      throw new NotFoundException('Profile picture not found');
+    }
   }
 
   async getAdminProfileByUsername(username: string): Promise<any> {

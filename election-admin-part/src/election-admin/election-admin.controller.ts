@@ -89,7 +89,7 @@ export class ElectionAdminController {
   }
 
   @Delete('delete-profile/:id')
-  // @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'))
   async deleteProfile(@Param('id') id: number): Promise<{ message: string }> {
     return await this.adminService.deleteProfileById(+id);
   }
@@ -119,10 +119,18 @@ export class ElectionAdminController {
     return 'File successfully uploaded!';
   }
 
-  @Get('view-profile-picture/:name')
+  @Get('view-profile-picture/:fileName')
   @UseGuards(AuthGuard('jwt'))
-  getImages(@Param('name') name, @Res() res) {
+  getImages(@Param('fileName') name, @Res() res) {
     res.sendFile(name, { root: './uploads' });
+  }
+
+  @Delete('delete-profile-picture/:fileName')
+  // @UseGuards(AuthGuard('jwt'))
+  async deleteProfilePicture(
+    @Param('fileName') fileName: string,
+  ): Promise<{ message: string }> {
+    return await this.adminService.deleteProfilePicture(fileName);
   }
 
   @Post('search-election-admin')
