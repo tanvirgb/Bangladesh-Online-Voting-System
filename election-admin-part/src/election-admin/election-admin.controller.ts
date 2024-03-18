@@ -27,6 +27,8 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { CreatePartyDto } from './dto/create-party.dto';
 import { Party } from './entities/party.entity';
 import { UpdatePartyDto } from './dto/update-party.dto';
+import { CreateReportIssueDto } from './dto/create-report-issue.dto';
+import { ReportIssue } from './entities/report.entity';
 
 @Controller('election-admin')
 export class ElectionAdminController {
@@ -176,6 +178,13 @@ export class ElectionAdminController {
     @Body('partyName') partyName: string,
   ): Promise<{ message: string }> {
     return this.adminService.removePartyByName(partyName);
+  }
+
+  @Post('report-issue')
+  async reportIssue(
+    @Body(new ValidationPipe()) reportDto: CreateReportIssueDto,
+  ): Promise<{ message: string; yourIssue: ReportIssue }> {
+    return await this.adminService.reportIssue(reportDto);
   }
 
   @Get()

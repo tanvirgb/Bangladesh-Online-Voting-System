@@ -13,6 +13,8 @@ import { CreatePartyDto } from './dto/create-party.dto';
 import { UpdatePartyDto } from './dto/update-party.dto';
 import path from 'path';
 import * as fs from 'fs';
+import { CreateReportIssueDto } from './dto/create-report-issue.dto';
+import { ReportIssue } from './entities/report.entity';
 
 @Injectable()
 export class ElectionAdminService {
@@ -26,6 +28,8 @@ export class ElectionAdminService {
     private readonly jwtService: JwtService,
     @InjectRepository(Party)
     private readonly partyRepository: Repository<Party>,
+    @InjectRepository(ReportIssue)
+    private readonly reportRepository: Repository<ReportIssue>,
   ) {}
 
   async findByUsername(username: string): Promise<ElectionAdmin | undefined> {
@@ -218,6 +222,25 @@ export class ElectionAdminService {
 
     return {
       message: 'Party successfully deleted!',
+    };
+  }
+
+  async reportIssue(
+    reportDto: CreateReportIssueDto,
+  ): Promise<{ message: string; yourIssue: ReportIssue }> {
+    const reportIssue = new ReportIssue();
+    reportIssue.username = reportDto.username;
+    reportIssue.email = reportDto.email;
+    reportIssue.issue = reportDto.issue;
+
+    const reportedIssue = await this.reportRepository.save(reportIssue);
+
+    if (!reportedIssue) {
+      throw new NotFoundException('Report issue failed!');
+    }
+    return {
+      message: 'Reported issue successfully!',
+      yourIssue: reportedIssue,
     };
   }
 
