@@ -156,7 +156,7 @@ export class ElectionAdminController {
   async getAdminProfile(
     @Body('username') username: string,
   ): Promise<ElectionAdmin> {
-    const admin = await this.adminService.findAdminProfileByUsername(username);
+    const admin = await this.adminService.findElectionAdminByUsername(username);
     if (!admin) {
       throw new NotFoundException('Admin not found');
     }
@@ -173,21 +173,21 @@ export class ElectionAdminController {
   }
 
   @Post('search-system-admin')
-  // @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'))
   async findSystemAdminByUsername(
     @Body('username') username: string,
   ): Promise<SystemAdmin> {
     return this.adminService.findSystemAdminByUsername(username);
   }
 
-  /* @Delete('remove-admin')
-  // @UseGuards(AuthGuard('jwt'))
+  @Delete('remove-system-admin')
+  @UseGuards(AuthGuard('jwt'))
   async deleteSystemAdmin(
     @Body('username') username: string,
   ): Promise<{ message: string }> {
-    return this.adminService.removeAdminByUsername(username);
+    return this.adminService.removeSystemAdminByUsername(username);
   }
- */
+
   @Post('add-party')
   @UseGuards(AuthGuard('jwt'))
   async addParty(
@@ -218,7 +218,7 @@ export class ElectionAdminController {
   async deleteParty(
     @Body('partyName') partyName: string,
   ): Promise<{ message: string }> {
-    return this.adminService.removePartyByName(partyName);
+    return this.adminService.removePartyByPartyName(partyName);
   }
 
   @Post('report-issue')

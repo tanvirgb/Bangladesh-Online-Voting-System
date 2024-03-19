@@ -67,7 +67,7 @@ export class ElectionAdminService {
       throw new NotFoundException('Password reset failed');
     }
 
-    return { message: 'Your password has been changed!' };
+    return { message: 'Your password has been successfully changed!' };
   }
 
   async createElectionAdmin(
@@ -124,7 +124,7 @@ export class ElectionAdminService {
       relations: ['profile'],
     });
     if (!existingAdmin) {
-      throw new NotFoundException('Admin not found');
+      throw new NotFoundException("'Election Admin' not found'");
     }
 
     existingAdmin.username = updateDto.username;
@@ -140,7 +140,7 @@ export class ElectionAdminService {
     const updatedAdmin = await this.electionAdminRepository.save(existingAdmin);
 
     if (!updatedAdmin) {
-      throw new NotFoundException('Update failed');
+      throw new NotFoundException("Update failed'");
     }
     return {
       message: 'Your profile has been successfully updated!',
@@ -154,7 +154,7 @@ export class ElectionAdminService {
       relations: ['profile', 'contacts'],
     });
     if (!admin) {
-      throw new NotFoundException('Admin not found');
+      throw new NotFoundException("'Admin' not found");
     }
 
     await this.electionAdminProfileRepository.delete(admin.profile.id);
@@ -165,7 +165,7 @@ export class ElectionAdminService {
 
     await this.electionAdminRepository.delete(id);
 
-    return { message: 'Your profile has been successfully deleted!' };
+    return { message: "'Your profile has been successfully deleted!" };
   }
 
   async deleteProfilePicture(fileName: string): Promise<{ message: string }> {
@@ -173,19 +173,19 @@ export class ElectionAdminService {
 
     if (fs.existsSync(profilePicturePath)) {
       fs.unlinkSync(profilePicturePath);
-      return { message: 'Profile picture has been deleted successfully!' };
+      return { message: "'Profile picture' has been successfully deleted!" };
     } else {
-      throw new NotFoundException('Profile picture not found');
+      throw new NotFoundException("'Profile picture' not found");
     }
   }
 
-  async findAdminProfileByUsername(username: string): Promise<any> {
+  async findElectionAdminByUsername(username: string): Promise<any> {
     const admin = await this.electionAdminRepository.findOne({
       where: { username },
       relations: ['profile', 'contacts'],
     });
     if (!admin) {
-      throw new NotFoundException('Admin not found');
+      throw new NotFoundException("'Election Admin' not found");
     }
 
     const { email } = admin;
@@ -226,16 +226,52 @@ export class ElectionAdminService {
     const savedAdmin = await this.systemAdminRepository.save(admin);
 
     if (!savedAdmin) {
-      throw new NotFoundException('Registration failed');
+      throw new NotFoundException('Adding failed');
     }
     return {
-      message: 'Registration successful!',
+      message: "'System Admin' has been successfully added!",
       systemAdmin: savedAdmin,
     };
   }
 
-  async findSystemAdminByUsername(username: string): Promise<SystemAdmin> {
-    return this.systemAdminRepository.findOne({ where: { username } });
+  async findSystemAdminByUsername(username: string): Promise<any> {
+    const admin = await this.systemAdminRepository.findOne({
+      where: { username },
+      relations: ['profile', 'contacts'],
+    });
+    if (!admin) {
+      throw new NotFoundException("'System Admin' not found");
+    }
+
+    const { email, nid } = admin;
+    const { profile, contacts } = admin;
+    const { name, address, gender, religion } = profile;
+    const contact = contacts[0]?.contact;
+
+    return { name, email, nid, address, gender, religion, contact };
+  }
+
+  async removeSystemAdminByUsername(
+    username: string,
+  ): Promise<{ message: string }> {
+    const admin = await this.systemAdminRepository.findOne({
+      where: { username },
+      relations: ['profile', 'contacts'],
+    });
+    if (!admin) {
+      throw new NotFoundException("'System Admin' not found'");
+    }
+
+    await this.systemAdminProfileRepository.delete(admin.profile.id);
+
+    if (admin.contacts && admin.contacts.length > 0)
+      for (const contact of admin.contacts) {
+        await this.systemAdminContactRepository.delete(contact.id);
+      }
+
+    await this.systemAdminRepository.delete(admin.id);
+
+    return { message: "'System Admin' has been successfully removed!" };
   }
 
   async addParty(
@@ -255,7 +291,7 @@ export class ElectionAdminService {
       throw new NotFoundException('Adding failed');
     }
     return {
-      message: 'Party successfully added!',
+      message: "'Party' successfully added!",
       party: addedParty,
     };
   }
@@ -271,7 +307,7 @@ export class ElectionAdminService {
     const party = await this.partyRepository.findOne({ where: { partyName } });
 
     if (!party) {
-      throw new NotFoundException('Party not found');
+      throw new NotFoundException("'Party' not found");
     }
 
     party.partyLeader = updateDto.partyLeader;
@@ -282,22 +318,24 @@ export class ElectionAdminService {
     const updatedParty = await this.partyRepository.save(party);
 
     return {
-      message: 'Party successfully updated!',
+      message: "'Party' has been successfully updated!",
       party: updatedParty,
     };
   }
 
-  async removePartyByName(partyName: string): Promise<{ message: string }> {
+  async removePartyByPartyName(
+    partyName: string,
+  ): Promise<{ message: string }> {
     const party = await this.partyRepository.findOne({ where: { partyName } });
 
     if (!party) {
-      throw new NotFoundException('Party not found');
+      throw new NotFoundException("'Party' not found");
     }
 
     await this.partyRepository.remove(party);
 
     return {
-      message: 'Party successfully deleted!',
+      message: "'Party' has been successfully removed!",
     };
   }
 
@@ -313,10 +351,10 @@ export class ElectionAdminService {
     const reportedIssue = await this.reportRepository.save(reportIssue);
 
     if (!reportedIssue) {
-      throw new NotFoundException('Report issue failed!');
+      throw new NotFoundException("'Report issue' failed!");
     }
     return {
-      message: 'Reported issue successfully!',
+      message: "'Reported issue' successfully!'",
       yourIssue: reportedIssue,
     };
   }
