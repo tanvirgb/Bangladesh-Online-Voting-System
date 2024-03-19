@@ -6,11 +6,11 @@ import {
   Generated,
   OneToMany,
 } from 'typeorm';
-import { ElectionAdminProfile } from './election-admin-profile.entity';
-import { ElectionAdminContact } from './election-admin-contact.entity';
+import { SystemAdminContact } from './system-admin-contact.entity';
+import { SystemAdminProfile } from './system-admin-profile.entity';
 
 @Entity()
-export class ElectionAdmin {
+export class SystemAdmin {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -30,13 +30,13 @@ export class ElectionAdmin {
   @Column({ length: 90, unique: true })
   nid: string;
 
-  @OneToOne(() => ElectionAdminProfile, (profile) => profile.admin, {
+  @OneToOne(() => SystemAdminProfile, (profile) => profile.admin, {
     cascade: true,
   })
-  profile: ElectionAdminProfile;
+  profile: SystemAdminProfile;
 
-  @OneToMany(() => ElectionAdminContact, (contact) => contact.admin, {
+  @OneToMany(() => SystemAdminContact, (contact) => contact.admin, {
     cascade: true,
   })
-  contacts: ElectionAdminContact[];
+  contacts: SystemAdminContact[];
 }

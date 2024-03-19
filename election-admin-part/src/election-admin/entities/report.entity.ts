@@ -9,10 +9,10 @@ export class ReportIssue {
   @Generated('uuid')
   uniqueId: string;
 
-  @Column({ length: 70 })
+  @Column({ length: 70, unique: true })
   username: string;
 
-  @Column({ length: 70 })
+  @Column({ length: 90 })
   email: string;
 
   @Column({ length: 1000 })

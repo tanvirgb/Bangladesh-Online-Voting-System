@@ -8,10 +8,10 @@ import {
   MinLength,
 } from 'class-validator';
 
-export class CreateElectionAdminDto {
+export class CreateSystemAdminDto {
   @Matches(/^[a-zA-Z0-9]+$/, {
     message:
-      '"Username" can only contain alphanumeric characters (letters and numbers)',
+      'Username can only contain alphanumeric characters (letters and numbers)',
   })
   @MaxLength(39, { message: '"Username" cannot be longer than 39 characters' })
   @MinLength(5, { message: '"Username" must be at least 5 characters long' })

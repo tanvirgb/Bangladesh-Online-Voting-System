@@ -18,7 +18,7 @@ export class Party {
   @Column({ length: 1000 })
   partyDescription: string;
 
-  @Column({ length: 70 })
+  @Column({ length: 90 })
   foundingDate: string;
 
   @Column({ length: 25 })
