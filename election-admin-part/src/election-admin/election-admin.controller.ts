@@ -30,6 +30,8 @@ import { Party } from './entities/party.entity';
 import { UpdatePartyDto } from './dto/update-party.dto';
 import { CreateReportIssueDto } from './dto/create-report-issue.dto';
 import { ReportIssue } from './entities/report.entity';
+import { CreateSystemAdminDto } from './dto/create-system-admin.dto';
+import { SystemAdmin } from './entities/system-admin.entity';
 
 @Controller('election-admin')
 export class ElectionAdminController {
@@ -154,7 +156,7 @@ export class ElectionAdminController {
   async getAdminProfile(
     @Body('username') username: string,
   ): Promise<ElectionAdmin> {
-    const admin = await this.adminService.getAdminProfileByUsername(username);
+    const admin = await this.adminService.findAdminProfileByUsername(username);
     if (!admin) {
       throw new NotFoundException('Admin not found');
     }
@@ -162,6 +164,30 @@ export class ElectionAdminController {
     return admin;
   }
 
+  @Post('add-system-admin')
+  @UseGuards(AuthGuard('jwt'))
+  async createSystemAdmin(
+    @Body(new ValidationPipe()) addDto: CreateSystemAdminDto,
+  ): Promise<{ message: string; systemAdmin: SystemAdmin }> {
+    return await this.adminService.addSystemAdmin(addDto);
+  }
+
+  @Post('search-system-admin')
+  // @UseGuards(AuthGuard('jwt'))
+  async findSystemAdminByUsername(
+    @Body('username') username: string,
+  ): Promise<SystemAdmin> {
+    return this.adminService.findSystemAdminByUsername(username);
+  }
+
+  /* @Delete('remove-admin')
+  // @UseGuards(AuthGuard('jwt'))
+  async deleteSystemAdmin(
+    @Body('username') username: string,
+  ): Promise<{ message: string }> {
+    return this.adminService.removeAdminByUsername(username);
+  }
+ */
   @Post('add-party')
   @UseGuards(AuthGuard('jwt'))
   async addParty(

@@ -26,7 +26,7 @@ export class CreateSystemAdminDto {
         '"Password" must contain at least one uppercase letter, one lowercase letter, one number, and one special character (!@#$%^&*)',
     },
   )
-  @MaxLength(39, { message: '"Password" cannot be longer than 39 characters' })
+  @MaxLength(19, { message: '"Password" cannot be longer than 19 characters' })
   @MinLength(8, { message: '"Password" must be at least 8 characters long' })
   @IsString({
     message:

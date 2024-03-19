@@ -14,17 +14,28 @@ import { UpdatePartyDto } from './dto/update-party.dto';
 import * as fs from 'fs';
 import { CreateReportIssueDto } from './dto/create-report-issue.dto';
 import { ReportIssue } from './entities/report.entity';
+import { SystemAdmin } from './entities/system-admin.entity';
+import { SystemAdminContact } from './entities/system-admin-contact.entity';
+import { SystemAdminProfile } from './entities/system-admin-profile.entity';
+import { CreateSystemAdminDto } from './dto/create-system-admin.dto';
 
 @Injectable()
 export class ElectionAdminService {
   constructor(
-    @InjectRepository(ElectionAdmin)
-    private readonly adminRepository: Repository<ElectionAdmin>,
-    @InjectRepository(ElectionAdminProfile)
-    private readonly profileRepository: Repository<ElectionAdminProfile>,
-    @InjectRepository(ElectionAdminContact)
-    private readonly contactRepository: Repository<ElectionAdminContact>,
     private readonly jwtService: JwtService,
+    @InjectRepository(ElectionAdmin)
+    private readonly electionAdminRepository: Repository<ElectionAdmin>,
+    @InjectRepository(ElectionAdminProfile)
+    private readonly electionAdminProfileRepository: Repository<ElectionAdminProfile>,
+    @InjectRepository(ElectionAdminContact)
+    private readonly electionAdminContactRepository: Repository<ElectionAdminContact>,
+    @InjectRepository(SystemAdmin)
+    private readonly systemAdminRepository: Repository<SystemAdmin>,
+    @InjectRepository(SystemAdminProfile)
+    private readonly systemAdminProfileRepository: Repository<SystemAdminProfile>,
+    @InjectRepository(SystemAdminContact)
+    private readonly systemAdminContactRepository: Repository<SystemAdminContact>,
+
     @InjectRepository(Party)
     private readonly partyRepository: Repository<Party>,
     @InjectRepository(ReportIssue)
@@ -32,14 +43,14 @@ export class ElectionAdminService {
   ) {}
 
   async findByUsername(username: string): Promise<ElectionAdmin | undefined> {
-    return await this.adminRepository.findOne({ where: { username } });
+    return await this.electionAdminRepository.findOne({ where: { username } });
   }
 
   async changePassword(
     email: string,
     changeDto: CreateElectionAdminDto,
   ): Promise<{ message: string }> {
-    const existingAdmin = await this.adminRepository.findOne({
+    const existingAdmin = await this.electionAdminRepository.findOne({
       where: { email },
     });
     if (!existingAdmin) {
@@ -49,7 +60,8 @@ export class ElectionAdminService {
     const hashedPassword = await bcrypt.hash(changeDto.password, 10);
     existingAdmin.password = hashedPassword;
 
-    const changedPassword = await this.adminRepository.save(existingAdmin);
+    const changedPassword =
+      await this.electionAdminRepository.save(existingAdmin);
 
     if (!changedPassword) {
       throw new NotFoundException('Password reset failed');
@@ -67,12 +79,14 @@ export class ElectionAdminService {
     adminProfile.gender = registrationDto.gender;
     adminProfile.religion = registrationDto.religion;
 
-    const savedProfile = await this.profileRepository.save(adminProfile);
+    const savedProfile =
+      await this.electionAdminProfileRepository.save(adminProfile);
 
     const adminContact = new ElectionAdminContact();
     adminContact.contact = registrationDto.contact;
     adminContact.admin = savedProfile.admin;
-    const savedContact = await this.contactRepository.save(adminContact);
+    const savedContact =
+      await this.electionAdminContactRepository.save(adminContact);
 
     const admin = new ElectionAdmin();
     admin.username = registrationDto.username;
@@ -83,7 +97,7 @@ export class ElectionAdminService {
     admin.profile = savedProfile;
     admin.contacts = [savedContact];
 
-    const savedAdmin = await this.adminRepository.save(admin);
+    const savedAdmin = await this.electionAdminRepository.save(admin);
 
     if (!savedAdmin) {
       throw new NotFoundException('Registration failed');
@@ -95,7 +109,7 @@ export class ElectionAdminService {
   }
 
   async getOwnProfileById(id: number): Promise<ElectionAdmin> {
-    return this.adminRepository.findOne({
+    return this.electionAdminRepository.findOne({
       where: { id },
       relations: ['profile', 'contacts'],
     });
@@ -105,7 +119,7 @@ export class ElectionAdminService {
     id: number,
     updateDto: UpdateElectionAdminDto,
   ): Promise<{ message: string; personalDetails: ElectionAdmin }> {
-    const existingAdmin = await this.adminRepository.findOne({
+    const existingAdmin = await this.electionAdminRepository.findOne({
       where: { id },
       relations: ['profile'],
     });
@@ -123,7 +137,7 @@ export class ElectionAdminService {
     existingAdmin.profile.gender = updateDto.gender;
     existingAdmin.profile.religion = updateDto.religion;
 
-    const updatedAdmin = await this.adminRepository.save(existingAdmin);
+    const updatedAdmin = await this.electionAdminRepository.save(existingAdmin);
 
     if (!updatedAdmin) {
       throw new NotFoundException('Update failed');
@@ -135,7 +149,7 @@ export class ElectionAdminService {
   }
 
   async deleteProfileById(id: number): Promise<{ message: string }> {
-    const admin = await this.adminRepository.findOne({
+    const admin = await this.electionAdminRepository.findOne({
       where: { id },
       relations: ['profile', 'contacts'],
     });
@@ -143,13 +157,13 @@ export class ElectionAdminService {
       throw new NotFoundException('Admin not found');
     }
 
-    await this.profileRepository.delete(admin.profile.id);
+    await this.electionAdminProfileRepository.delete(admin.profile.id);
 
     for (const contact of admin.contacts) {
-      await this.contactRepository.delete(contact.id);
+      await this.electionAdminContactRepository.delete(contact.id);
     }
 
-    await this.adminRepository.delete(id);
+    await this.electionAdminRepository.delete(id);
 
     return { message: 'Your profile has been successfully deleted!' };
   }
@@ -165,8 +179,8 @@ export class ElectionAdminService {
     }
   }
 
-  async getAdminProfileByUsername(username: string): Promise<any> {
-    const admin = await this.adminRepository.findOne({
+  async findAdminProfileByUsername(username: string): Promise<any> {
+    const admin = await this.electionAdminRepository.findOne({
       where: { username },
       relations: ['profile', 'contacts'],
     });
@@ -180,6 +194,48 @@ export class ElectionAdminService {
     const contact = contacts[0]?.contact;
 
     return { name, email, contact };
+  }
+
+  async addSystemAdmin(
+    addDto: CreateSystemAdminDto,
+  ): Promise<{ message: string; systemAdmin: SystemAdmin }> {
+    const adminProfile = new SystemAdminProfile();
+    adminProfile.name = addDto.name;
+    adminProfile.address = addDto.address;
+    adminProfile.gender = addDto.gender;
+    adminProfile.religion = addDto.religion;
+
+    const savedProfile =
+      await this.systemAdminProfileRepository.save(adminProfile);
+
+    const adminContact = new SystemAdminContact();
+    adminContact.contact = addDto.contact;
+    adminContact.admin = savedProfile.admin;
+    const savedContact =
+      await this.systemAdminContactRepository.save(adminContact);
+
+    const admin = new SystemAdmin();
+    admin.username = addDto.username;
+    const hashedPassword = await bcrypt.hash(addDto.password, 10);
+    admin.password = hashedPassword;
+    admin.email = addDto.email;
+    admin.nid = addDto.nid;
+    admin.profile = savedProfile;
+    admin.contacts = [savedContact];
+
+    const savedAdmin = await this.systemAdminRepository.save(admin);
+
+    if (!savedAdmin) {
+      throw new NotFoundException('Registration failed');
+    }
+    return {
+      message: 'Registration successful!',
+      systemAdmin: savedAdmin,
+    };
+  }
+
+  async findSystemAdminByUsername(username: string): Promise<SystemAdmin> {
+    return this.systemAdminRepository.findOne({ where: { username } });
   }
 
   async addParty(

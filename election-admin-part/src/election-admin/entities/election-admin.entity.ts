@@ -21,7 +21,7 @@ export class ElectionAdmin {
   @Column({ length: 40, unique: true })
   username: string;
 
-  @Column({ length: 40 })
+  @Column({ length: 1000 })
   password: string;
 
   @Column({ length: 90, unique: true })

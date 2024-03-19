@@ -8,6 +8,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Party } from './entities/party.entity';
 import { ReportIssue } from './entities/report.entity';
 import { AuthService } from './auth/auth.service';
+import { SystemAdmin } from './entities/system-admin.entity';
+import { SystemAdminProfile } from './entities/system-admin-profile.entity';
+import { SystemAdminContact } from './entities/system-admin-contact.entity';
 
 @Module({
   imports: [
@@ -15,6 +18,9 @@ import { AuthService } from './auth/auth.service';
       ElectionAdmin,
       ElectionAdminProfile,
       ElectionAdminContact,
+      SystemAdmin,
+      SystemAdminProfile,
+      SystemAdminContact,
       Party,
       ReportIssue,
     ]),
