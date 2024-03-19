@@ -9,7 +9,7 @@ import { jwtConstants } from './constants';
 
 @Module({
   imports: [
-    PassportModule,
+    PassportModule.register({ session: true }),
     ElectionAdminModule,
     JwtModule.register({
       global: jwtConstants.global,

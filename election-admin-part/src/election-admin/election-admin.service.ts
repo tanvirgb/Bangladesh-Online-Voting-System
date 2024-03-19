@@ -11,7 +11,6 @@ import { JwtService } from '@nestjs/jwt';
 import { Party } from './entities/party.entity';
 import { CreatePartyDto } from './dto/create-party.dto';
 import { UpdatePartyDto } from './dto/update-party.dto';
-import path from 'path';
 import * as fs from 'fs';
 import { CreateReportIssueDto } from './dto/create-report-issue.dto';
 import { ReportIssue } from './entities/report.entity';
@@ -36,13 +35,35 @@ export class ElectionAdminService {
     return await this.adminRepository.findOne({ where: { username } });
   }
 
+  async changePassword(
+    email: string,
+    changeDto: CreateElectionAdminDto,
+  ): Promise<{ message: string }> {
+    const existingAdmin = await this.adminRepository.findOne({
+      where: { email },
+    });
+    if (!existingAdmin) {
+      throw new NotFoundException('Email not found');
+    }
+
+    const hashedPassword = await bcrypt.hash(changeDto.password, 10);
+    existingAdmin.password = hashedPassword;
+
+    const changedPassword = await this.adminRepository.save(existingAdmin);
+
+    if (!changedPassword) {
+      throw new NotFoundException('Password reset failed');
+    }
+
+    return { message: 'Your password has been changed!' };
+  }
+
   async createElectionAdmin(
     registrationDto: CreateElectionAdminDto,
   ): Promise<{ message: string; yourProfile: ElectionAdmin }> {
     const adminProfile = new ElectionAdminProfile();
     adminProfile.name = registrationDto.name;
     adminProfile.address = registrationDto.address;
-    adminProfile.email = registrationDto.email;
     adminProfile.gender = registrationDto.gender;
     adminProfile.religion = registrationDto.religion;
 
@@ -56,8 +77,8 @@ export class ElectionAdminService {
     const admin = new ElectionAdmin();
     admin.username = registrationDto.username;
     const hashedPassword = await bcrypt.hash(registrationDto.password, 10);
-
     admin.password = hashedPassword;
+    admin.email = registrationDto.email;
     admin.nid = registrationDto.nid;
     admin.profile = savedProfile;
     admin.contacts = [savedContact];
@@ -93,15 +114,12 @@ export class ElectionAdminService {
     }
 
     existingAdmin.username = updateDto.username;
-    existingAdmin.nid = updateDto.nid;
-
     const hashedPassword = await bcrypt.hash(updateDto.password, 10);
-
     existingAdmin.password = hashedPassword;
-
+    existingAdmin.nid = updateDto.nid;
+    existingAdmin.email = updateDto.email;
     existingAdmin.profile.name = updateDto.name;
     existingAdmin.profile.address = updateDto.address;
-    existingAdmin.profile.email = updateDto.email;
     existingAdmin.profile.gender = updateDto.gender;
     existingAdmin.profile.religion = updateDto.religion;
 
@@ -156,8 +174,9 @@ export class ElectionAdminService {
       throw new NotFoundException('Admin not found');
     }
 
+    const { email } = admin;
     const { profile, contacts } = admin;
-    const { name, email } = profile;
+    const { name } = profile;
     const contact = contacts[0]?.contact;
 
     return { name, email, contact };
@@ -167,6 +186,7 @@ export class ElectionAdminService {
     addDto: CreatePartyDto,
   ): Promise<{ message: string; party: Party }> {
     const party = new Party();
+
     party.partyName = addDto.partyName;
     party.partyLeader = addDto.partyLeader;
     party.partyDescription = addDto.partyDescription;
@@ -229,6 +249,7 @@ export class ElectionAdminService {
     reportDto: CreateReportIssueDto,
   ): Promise<{ message: string; yourIssue: ReportIssue }> {
     const reportIssue = new ReportIssue();
+
     reportIssue.username = reportDto.username;
     reportIssue.email = reportDto.email;
     reportIssue.issue = reportDto.issue;

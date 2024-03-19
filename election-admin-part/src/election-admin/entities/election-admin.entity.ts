@@ -24,6 +24,9 @@ export class ElectionAdmin {
   @Column({ length: 70 })
   password: string;
 
+  @Column({ length: 70 })
+  email: string;
+
   @Column({ length: 70, unique: true })
   nid: string;
 

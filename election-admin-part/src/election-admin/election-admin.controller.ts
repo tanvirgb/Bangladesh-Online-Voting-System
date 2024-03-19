@@ -15,6 +15,7 @@ import {
   NotFoundException,
   Put,
   Req,
+  Session,
 } from '@nestjs/common';
 import { ElectionAdminService } from './election-admin.service';
 import { CreateElectionAdminDto } from './dto/create-election-admin.dto';
@@ -46,12 +47,25 @@ export class ElectionAdminController {
       username,
       uniqueId: null,
       password: null,
+      email: null,
       nid: null,
       profile: null,
       contacts: null,
     };
 
     return this.authService.generateToken(electionAdmin);
+  }
+
+  @Put('forget-password')
+  async changePassword(
+    @Body('email') email: string,
+    @Body() changeDto: CreateElectionAdminDto,
+  ): Promise<{ message: string }> {
+    const result = await this.adminService.changePassword(email, changeDto);
+    if (!result) {
+      throw new NotFoundException('Email not found');
+    }
+    return result;
   }
 
   @Post('registration')
@@ -61,8 +75,8 @@ export class ElectionAdminController {
     return await this.adminService.createElectionAdmin(registrationDto);
   }
 
-  @UseGuards(AuthGuard('jwt'))
   @Get('view-profile')
+  @UseGuards(AuthGuard('jwt'))
   async getOwnProfile(@Request() req): Promise<any> {
     const ownId = req.user.id;
     const ownProfile = await this.adminService.getOwnProfileById(ownId);
@@ -128,7 +142,7 @@ export class ElectionAdminController {
   }
 
   @Delete('delete-profile-picture/:fileName')
-  // @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'))
   async deleteProfilePicture(
     @Param('fileName') fileName: string,
   ): Promise<{ message: string }> {
@@ -165,6 +179,7 @@ export class ElectionAdminController {
   }
 
   @Put('update-party')
+  @UseGuards(AuthGuard('jwt'))
   async updateParty(
     @Body('partyName') partyName: string,
     @Body() updateDto: UpdatePartyDto,
@@ -181,6 +196,7 @@ export class ElectionAdminController {
   }
 
   @Post('report-issue')
+  @UseGuards(AuthGuard('jwt'))
   async reportIssue(
     @Body(new ValidationPipe()) reportDto: CreateReportIssueDto,
   ): Promise<{ message: string; yourIssue: ReportIssue }> {

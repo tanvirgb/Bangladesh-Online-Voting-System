@@ -23,9 +23,6 @@ export class ElectionAdminProfile {
   @Column({ length: 250 })
   address: string;
 
-  @Column({ length: 70 })
-  email: string;
-
   @Column({ length: 30 })
   gender: string;
 
