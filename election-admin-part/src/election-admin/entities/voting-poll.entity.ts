@@ -24,6 +24,6 @@ export class VotingPoll {
   @Column({ length: 250 })
   electionLocation: string;
 
-  @Column({ length: 50 })
+  @Column({ length: 60 })
   prediction: string;
 }
