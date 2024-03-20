@@ -34,6 +34,7 @@ import { CreateSystemAdminDto } from './dto/create-system-admin.dto';
 import { SystemAdmin } from './entities/system-admin.entity';
 import { VotingPoll } from './entities/voting-poll.entity';
 import { CreateVotingPollDto } from './dto/create-voting-poll.dto';
+import { UpdateVotingPollDto } from './dto/update-voting-poll.dto';
 
 @Controller('election-admin')
 export class ElectionAdminController {
@@ -237,6 +238,15 @@ export class ElectionAdminController {
     @Body('username') username: string,
   ): Promise<VotingPoll> {
     return this.adminService.findVotingPollByUsername(username);
+  }
+
+  @Put('update-voting-poll')
+  @UseGuards(AuthGuard('jwt'))
+  async updateVotingPoll(
+    @Body('username') username: string,
+    @Body() updateDto: UpdateVotingPollDto,
+  ): Promise<{ message: string; votingPoll: VotingPoll }> {
+    return await this.adminService.updateVotingPoll(username, updateDto);
   }
 
   @Post('report-issue')

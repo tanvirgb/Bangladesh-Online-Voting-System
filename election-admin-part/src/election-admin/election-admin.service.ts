@@ -21,6 +21,7 @@ import { CreateSystemAdminDto } from './dto/create-system-admin.dto';
 import { CreateVotingPollDto } from './dto/create-voting-poll.dto';
 import { VotingPoll } from './entities/voting-poll.entity';
 import { createSecretKey } from 'crypto';
+import { UpdateVotingPollDto } from './dto/update-voting-poll.dto';
 
 @Injectable()
 export class ElectionAdminService {
@@ -295,7 +296,7 @@ export class ElectionAdminService {
       throw new NotFoundException('Adding failed');
     }
     return {
-      message: "'Party' successfully added!",
+      message: "'Party' has been successfully added!",
       party: addedParty,
     };
   }
@@ -361,13 +362,40 @@ export class ElectionAdminService {
       throw new NotFoundException('Adding failed');
     }
     return {
-      message: "'Voting Poll' successfully added!",
+      message: "'Voting Poll' has been successfully added!",
       votingPoll: addedVotingPoll,
     };
   }
 
   async findVotingPollByUsername(username: string): Promise<VotingPoll> {
     return this.votingPollRepository.findOne({ where: { username } });
+  }
+
+  async updateVotingPoll(
+    username: string,
+    updateDto: UpdateVotingPollDto,
+  ): Promise<{ message: string; votingPoll: VotingPoll }> {
+    const votingPoll = await this.votingPollRepository.findOne({
+      where: { username },
+    });
+
+    if (!votingPoll) {
+      throw new NotFoundException("'Voting Poll' not found");
+    }
+
+    votingPoll.username = updateDto.username;
+    votingPoll.candidateName = updateDto.candidateName;
+    votingPoll.partyName = updateDto.partyName;
+    votingPoll.voteCount = updateDto.voteCount;
+    votingPoll.electionLocation = updateDto.electionLocation;
+    votingPoll.prediction = updateDto.prediction;
+
+    const updatedVotingPoll = await this.votingPollRepository.save(votingPoll);
+
+    return {
+      message: "'Voting Poll' has been successfully updated!",
+      votingPoll: updatedVotingPoll,
+    };
   }
 
   async reportIssue(
