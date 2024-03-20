@@ -180,12 +180,16 @@ export class ElectionAdminController {
   async findSystemAdminByUsername(
     @Body('username') username: string,
   ): Promise<SystemAdmin> {
-    return this.adminService.findSystemAdminByUsername(username);
+    const admin = await this.adminService.findSystemAdminByUsername(username);
+    if (!admin) {
+      throw new NotFoundException("'System Admin' not found");
+    }
+    return admin;
   }
 
   @Delete('remove-system-admin')
   @UseGuards(AuthGuard('jwt'))
-  async deleteSystemAdmin(
+  async removeSystemAdmin(
     @Body('username') username: string,
   ): Promise<{ message: string }> {
     return this.adminService.removeSystemAdminByUsername(username);
@@ -204,7 +208,11 @@ export class ElectionAdminController {
   async findPartyByUsername(
     @Body('partyName') partyName: string,
   ): Promise<Party> {
-    return this.adminService.findPartyByUsername(partyName);
+    const party = await this.adminService.findPartyByUsername(partyName);
+    if (!party) {
+      throw new NotFoundException("'Party' not found");
+    }
+    return party;
   }
 
   @Put('update-party')
@@ -218,7 +226,7 @@ export class ElectionAdminController {
 
   @Delete('remove-party')
   @UseGuards(AuthGuard('jwt'))
-  async deleteParty(
+  async removeParty(
     @Body('partyName') partyName: string,
   ): Promise<{ message: string }> {
     return this.adminService.removePartyByPartyName(partyName);
@@ -237,7 +245,12 @@ export class ElectionAdminController {
   async findVotingPollByUsername(
     @Body('username') username: string,
   ): Promise<VotingPoll> {
-    return this.adminService.findVotingPollByUsername(username);
+    const votingPoll =
+      await this.adminService.findVotingPollByUsername(username);
+    if (!votingPoll) {
+      throw new NotFoundException("'Voting Poll' not found");
+    }
+    return votingPoll;
   }
 
   @Put('update-voting-poll')
@@ -247,6 +260,14 @@ export class ElectionAdminController {
     @Body() updateDto: UpdateVotingPollDto,
   ): Promise<{ message: string; votingPoll: VotingPoll }> {
     return await this.adminService.updateVotingPoll(username, updateDto);
+  }
+
+  @Delete('remove-voting-poll')
+  @UseGuards(AuthGuard('jwt'))
+  async removeVotingPoll(
+    @Body('username') username: string,
+  ): Promise<{ message: string }> {
+    return this.adminService.removeVotingPollByUsername(username);
   }
 
   @Post('report-issue')

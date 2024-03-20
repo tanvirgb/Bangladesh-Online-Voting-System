@@ -368,7 +368,13 @@ export class ElectionAdminService {
   }
 
   async findVotingPollByUsername(username: string): Promise<VotingPoll> {
-    return this.votingPollRepository.findOne({ where: { username } });
+    const votingPoll = await this.votingPollRepository.findOne({
+      where: { username },
+    });
+    if (!votingPoll) {
+      throw new NotFoundException("'Voting Poll' not found");
+    }
+    return votingPoll;
   }
 
   async updateVotingPoll(
@@ -395,6 +401,24 @@ export class ElectionAdminService {
     return {
       message: "'Voting Poll' has been successfully updated!",
       votingPoll: updatedVotingPoll,
+    };
+  }
+
+  async removeVotingPollByUsername(
+    username: string,
+  ): Promise<{ message: string }> {
+    const votingPoll = await this.votingPollRepository.findOne({
+      where: { username },
+    });
+
+    if (!votingPoll) {
+      throw new NotFoundException("'Voting Poll' not found");
+    }
+
+    await this.votingPollRepository.remove(votingPoll);
+
+    return {
+      message: "'Voting Poll' has been successfully removed!",
     };
   }
 
