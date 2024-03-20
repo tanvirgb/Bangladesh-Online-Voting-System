@@ -15,6 +15,7 @@ import {
   NotFoundException,
   Put,
   Req,
+  Session,
 } from '@nestjs/common';
 import { ElectionAdminService } from './election-admin.service';
 import { CreateElectionAdminDto } from './dto/create-election-admin.dto';
@@ -34,6 +35,7 @@ import { SystemAdmin } from './entities/system-admin.entity';
 import { VotingPoll } from './entities/voting-poll.entity';
 import { CreateVotingPollDto } from './dto/create-voting-poll.dto';
 import { UpdateVotingPollDto } from './dto/update-voting-poll.dto';
+import { session } from 'passport';
 
 @Controller('election-admin')
 export class ElectionAdminController {
@@ -42,7 +44,7 @@ export class ElectionAdminController {
     private readonly authService: AuthService,
   ) {}
 
-  @Post('login')
+  /*   @Post('login')
   @UseGuards(AuthGuard('local'))
   login(@Request() req): string {
     const { id, username } = req.user;
@@ -58,6 +60,35 @@ export class ElectionAdminController {
     };
 
     return this.authService.generateToken(electionAdmin);
+  } */
+
+  @Get('session')
+  async getAuthSession(@Session() session: Record<string, any>) {
+    console.log(session);
+    console.log(session.id);
+    session.authenticated = true;
+    return session;
+  }
+
+  @Post('login')
+  @UseGuards(AuthGuard('local'))
+  login(@Request() req): { token: string } {
+    const { id, username } = req.user;
+
+    const electionAdmin: ElectionAdmin = {
+      id,
+      username,
+      uniqueId: null,
+      password: null,
+      email: null,
+      nid: null,
+      profile: null,
+      contacts: null,
+    };
+
+    req.session.user = { id, username };
+    const token = this.authService.generateToken(electionAdmin);
+    return { token };
   }
 
   @Put('forget-password')
