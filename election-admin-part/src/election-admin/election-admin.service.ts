@@ -18,6 +18,9 @@ import { SystemAdmin } from './entities/system-admin.entity';
 import { SystemAdminContact } from './entities/system-admin-contact.entity';
 import { SystemAdminProfile } from './entities/system-admin-profile.entity';
 import { CreateSystemAdminDto } from './dto/create-system-admin.dto';
+import { CreateVotingPollDto } from './dto/create-voting-poll.dto';
+import { VotingPoll } from './entities/voting-poll.entity';
+import { createSecretKey } from 'crypto';
 
 @Injectable()
 export class ElectionAdminService {
@@ -35,9 +38,10 @@ export class ElectionAdminService {
     private readonly systemAdminProfileRepository: Repository<SystemAdminProfile>,
     @InjectRepository(SystemAdminContact)
     private readonly systemAdminContactRepository: Repository<SystemAdminContact>,
-
     @InjectRepository(Party)
     private readonly partyRepository: Repository<Party>,
+    @InjectRepository(VotingPoll)
+    private readonly votingPollRepository: Repository<VotingPoll>,
     @InjectRepository(ReportIssue)
     private readonly reportRepository: Repository<ReportIssue>,
   ) {}
@@ -205,12 +209,12 @@ export class ElectionAdminService {
     adminProfile.gender = addDto.gender;
     adminProfile.religion = addDto.religion;
 
-    const savedProfile =
+    const addedProfile =
       await this.systemAdminProfileRepository.save(adminProfile);
 
     const adminContact = new SystemAdminContact();
     adminContact.contact = addDto.contact;
-    adminContact.admin = savedProfile.admin;
+    adminContact.admin = addedProfile.admin;
     const savedContact =
       await this.systemAdminContactRepository.save(adminContact);
 
@@ -220,17 +224,17 @@ export class ElectionAdminService {
     admin.password = hashedPassword;
     admin.email = addDto.email;
     admin.nid = addDto.nid;
-    admin.profile = savedProfile;
+    admin.profile = addedProfile;
     admin.contacts = [savedContact];
 
-    const savedAdmin = await this.systemAdminRepository.save(admin);
+    const addedAdmin = await this.systemAdminRepository.save(admin);
 
-    if (!savedAdmin) {
+    if (!addedAdmin) {
       throw new NotFoundException('Adding failed');
     }
     return {
       message: "'System Admin' has been successfully added!",
-      systemAdmin: savedAdmin,
+      systemAdmin: addedAdmin,
     };
   }
 
@@ -336,6 +340,29 @@ export class ElectionAdminService {
 
     return {
       message: "'Party' has been successfully removed!",
+    };
+  }
+
+  async createVotingPoll(
+    createDto: CreateVotingPollDto,
+  ): Promise<{ message: string; votingPoll: VotingPoll }> {
+    const votingPoll = new VotingPoll();
+
+    votingPoll.username = createDto.username;
+    votingPoll.candidateName = createDto.candidateName;
+    votingPoll.partyName = createDto.partyName;
+    votingPoll.voteCount = createDto.voteCount;
+    votingPoll.electionLocation = createDto.electionLocation;
+    votingPoll.prediction = createDto.prediction;
+
+    const addedVotingPoll = await this.votingPollRepository.save(votingPoll);
+
+    if (!addedVotingPoll) {
+      throw new NotFoundException('Adding failed');
+    }
+    return {
+      message: "'Voting Poll' successfully added!",
+      votingPoll: addedVotingPoll,
     };
   }
 

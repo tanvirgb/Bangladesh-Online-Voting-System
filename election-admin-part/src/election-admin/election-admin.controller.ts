@@ -32,6 +32,8 @@ import { CreateReportIssueDto } from './dto/create-report-issue.dto';
 import { ReportIssue } from './entities/report.entity';
 import { CreateSystemAdminDto } from './dto/create-system-admin.dto';
 import { SystemAdmin } from './entities/system-admin.entity';
+import { VotingPoll } from './entities/voting-poll.entity';
+import { CreateVotingPollDto } from './dto/create-voting-poll.dto';
 
 @Controller('election-admin')
 export class ElectionAdminController {
@@ -219,6 +221,14 @@ export class ElectionAdminController {
     @Body('partyName') partyName: string,
   ): Promise<{ message: string }> {
     return this.adminService.removePartyByPartyName(partyName);
+  }
+
+  @Post('add-voting-poll')
+  @UseGuards(AuthGuard('jwt'))
+  async addedVotingPoll(
+    @Body(new ValidationPipe()) addedDto: CreateVotingPollDto,
+  ): Promise<{ message: string; votingPoll: VotingPoll }> {
+    return await this.adminService.createVotingPoll(addedDto);
   }
 
   @Post('report-issue')

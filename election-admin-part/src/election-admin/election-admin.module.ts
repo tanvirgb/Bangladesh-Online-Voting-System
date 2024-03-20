@@ -11,6 +11,7 @@ import { AuthService } from './auth/auth.service';
 import { SystemAdmin } from './entities/system-admin.entity';
 import { SystemAdminProfile } from './entities/system-admin-profile.entity';
 import { SystemAdminContact } from './entities/system-admin-contact.entity';
+import { VotingPoll } from './entities/voting-poll.entity';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { SystemAdminContact } from './entities/system-admin-contact.entity';
       SystemAdminProfile,
       SystemAdminContact,
       Party,
+      VotingPoll,
       ReportIssue,
     ]),
   ],

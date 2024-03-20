@@ -19,7 +19,7 @@ export class VotingPoll {
   partyName: string;
 
   @Column({ default: 100 })
-  voteCount: number;
+  voteCount: string;
 
   @Column({ length: 250 })
   electionLocation: string;
