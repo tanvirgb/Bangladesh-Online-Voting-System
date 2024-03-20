@@ -20,6 +20,7 @@ import { CreateSystemAdminDto } from './dto/create-system-admin.dto';
 import { CreateVotingPollDto } from './dto/create-voting-poll.dto';
 import { VotingPoll } from './entities/voting-poll.entity';
 import { UpdateVotingPollDto } from './dto/update-voting-poll.dto';
+import { MailerService } from '@nestjs-modules/mailer';
 
 @Injectable()
 export class ElectionAdminService {
@@ -42,6 +43,7 @@ export class ElectionAdminService {
     private readonly votingPollRepository: Repository<VotingPoll>,
     @InjectRepository(ReportIssue)
     private readonly reportRepository: Repository<ReportIssue>,
+    private readonly mailerService: MailerService,
   ) {}
 
   async findByUsername(username: string): Promise<ElectionAdmin | undefined> {
@@ -104,10 +106,27 @@ export class ElectionAdminService {
     if (!savedAdmin) {
       throw new NotFoundException('Registration failed');
     }
+
+    await this.sendWelcomeEmail(savedAdmin.email, savedAdmin.username);
+
     return {
-      message: 'Registration successful!',
+      message:
+        'Registration successful! A welcome email has been sent to your email address.',
       yourProfile: savedAdmin,
     };
+  }
+
+  private async sendWelcomeEmail(
+    email: string,
+    username: string,
+  ): Promise<void> {
+    await this.mailerService.sendMail({
+      to: email,
+      from: 'admin0@mailinator.com',
+      subject: 'Welcome to Our Platform!',
+      text: `Welcome ${username} to our platform!`,
+      html: `<b>Welcome ${username} to our plaform!</b>`,
+    });
   }
 
   async getOwnProfileById(id: number): Promise<ElectionAdmin> {

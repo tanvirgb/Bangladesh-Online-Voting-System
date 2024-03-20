@@ -5,6 +5,7 @@ import { ElectionAdminModule } from './election-admin/election-admin.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './election-admin/auth/auth.module';
+import { MailerModule } from '@nestjs-modules/mailer';
 
 @Module({
   imports: [
@@ -26,6 +27,18 @@ import { AuthModule } from './election-admin/auth/auth.module';
         logging: true,
       }),
       inject: [ConfigService],
+    }),
+    MailerModule.forRoot({
+      transport: {
+        host: 'smtp.gmail.com',
+        port: 465,
+        ignoreTLS: true,
+        secure: true,
+        auth: {
+          user: null,
+          pass: null,
+        },
+      },
     }),
   ],
   controllers: [AppController],
