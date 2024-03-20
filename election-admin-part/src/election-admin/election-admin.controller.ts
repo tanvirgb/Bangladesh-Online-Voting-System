@@ -231,6 +231,14 @@ export class ElectionAdminController {
     return await this.adminService.createVotingPoll(addedDto);
   }
 
+  @Post('search-voting-poll')
+  @UseGuards(AuthGuard('jwt'))
+  async findVotingPollByUsername(
+    @Body('username') username: string,
+  ): Promise<VotingPoll> {
+    return this.adminService.findVotingPollByUsername(username);
+  }
+
   @Post('report-issue')
   @UseGuards(AuthGuard('jwt'))
   async reportIssue(

@@ -192,12 +192,12 @@ export class ElectionAdminService {
       throw new NotFoundException("'Election Admin' not found");
     }
 
-    const { email } = admin;
+    const { email, nid } = admin;
     const { profile, contacts } = admin;
-    const { name } = profile;
+    const { name, address, gender, religion } = profile;
     const contact = contacts[0]?.contact;
 
-    return { name, email, contact };
+    return { name, email, nid, address, gender, religion, contact };
   }
 
   async addSystemAdmin(
@@ -364,6 +364,10 @@ export class ElectionAdminService {
       message: "'Voting Poll' successfully added!",
       votingPoll: addedVotingPoll,
     };
+  }
+
+  async findVotingPollByUsername(username: string): Promise<VotingPoll> {
+    return this.votingPollRepository.findOne({ where: { username } });
   }
 
   async reportIssue(
