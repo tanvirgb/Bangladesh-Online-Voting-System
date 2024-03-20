@@ -7,7 +7,6 @@ import { ElectionAdminProfile } from './entities/election-admin-profile.entity';
 import { Repository } from 'typeorm';
 import { ElectionAdmin } from './entities/election-admin.entity';
 import * as bcrypt from 'bcrypt';
-import { JwtService } from '@nestjs/jwt';
 import { Party } from './entities/party.entity';
 import { CreatePartyDto } from './dto/create-party.dto';
 import { UpdatePartyDto } from './dto/update-party.dto';
@@ -20,13 +19,11 @@ import { SystemAdminProfile } from './entities/system-admin-profile.entity';
 import { CreateSystemAdminDto } from './dto/create-system-admin.dto';
 import { CreateVotingPollDto } from './dto/create-voting-poll.dto';
 import { VotingPoll } from './entities/voting-poll.entity';
-import { createSecretKey } from 'crypto';
 import { UpdateVotingPollDto } from './dto/update-voting-poll.dto';
 
 @Injectable()
 export class ElectionAdminService {
   constructor(
-    private readonly jwtService: JwtService,
     @InjectRepository(ElectionAdmin)
     private readonly electionAdminRepository: Repository<ElectionAdmin>,
     @InjectRepository(ElectionAdminProfile)
