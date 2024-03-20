@@ -308,6 +308,20 @@ export class ElectionAdminController {
     return await this.adminService.reportIssue(reportDto);
   }
 
+  @Post('logout')
+  async logout(@Request() req): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+      req.session.destroy((err) => {
+        if (err) {
+          console.error('Error destroying session:', err);
+          reject(err);
+        } else {
+          resolve('You have logged out!');
+        }
+      });
+    });
+  }
+
   @Get()
   findAll() {
     return this.adminService.findAll();
