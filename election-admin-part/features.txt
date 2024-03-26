@@ -1,0 +1,26 @@
+a. In this project the “Election Administration” has the following features:
+(20 feature per user)
+
+1. Login
+2. Forgot Password
+3. Registration
+4. View Profile
+5. Update Profile
+6. Delete Profile
+7. Upload Profile Picture
+8. View Profile Picture
+9. Delete Profile Picture
+10. Search Election Admin
+11. Add System Admin
+12. Search System Admin
+13. Remove System Admin
+14. Add Political Party
+15. Search Political Party
+16. Update Political Party
+17. Remove Political Party
+18. Create Voting Poll
+19. Search Voting Poll
+20. Update Voting Poll
+21. Remove Voting Poll
+22. Report Issue
+23. Logout

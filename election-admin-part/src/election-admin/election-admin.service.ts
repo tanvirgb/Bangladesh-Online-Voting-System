@@ -77,7 +77,7 @@ export class ElectionAdminService {
 
   async createElectionAdmin(
     registrationDto: CreateElectionAdminDto,
-  ): Promise<{ message: string; yourProfile: ElectionAdmin }> {
+  ): Promise<{ message: string; yourProfile: any }> {
     const adminProfile = new ElectionAdminProfile();
     adminProfile.name = registrationDto.name;
     adminProfile.address = registrationDto.address;
@@ -108,25 +108,22 @@ export class ElectionAdminService {
       throw new NotFoundException('Registration failed');
     }
 
-    await this.sendWelcomeEmail(savedAdmin.email, savedAdmin.username);
-
+    await this.sendWelcomeEmail(savedAdmin.email, savedProfile.name);
+    const { password, ...newAdmin } = savedAdmin;
     return {
       message:
         'Registration successful! A welcome email has been sent to your email address.',
-      yourProfile: savedAdmin,
+      yourProfile: newAdmin,
     };
   }
 
-  private async sendWelcomeEmail(
-    email: string,
-    username: string,
-  ): Promise<void> {
+  private async sendWelcomeEmail(email: string, name: string): Promise<void> {
     await this.mailerService.sendMail({
       to: email,
       from: mailerConstants.from,
       subject: 'Welcome to Our Platform!',
-      text: `Welcome ${username} to our platform!`,
-      html: `<b>Welcome ${username} to our plaform!</b>`,
+      text: `Welcome, ${name} to our platform!`,
+      html: `<b>Welcome, ${name} to our plaform!</b>`,
     });
   }
 
@@ -140,7 +137,7 @@ export class ElectionAdminService {
   async updateElectionAdmin(
     id: number,
     updateDto: UpdateElectionAdminDto,
-  ): Promise<{ message: string; personalDetails: ElectionAdmin }> {
+  ): Promise<{ message: string; personalDetails: any }> {
     const existingAdmin = await this.electionAdminRepository.findOne({
       where: { id },
       relations: ['profile'],
@@ -159,8 +156,8 @@ export class ElectionAdminService {
     existingAdmin.profile.gender = updateDto.gender;
     existingAdmin.profile.religion = updateDto.religion;
 
-    const updatedAdmin = await this.electionAdminRepository.save(existingAdmin);
-
+    const updateAdmin = await this.electionAdminRepository.save(existingAdmin);
+    const { password, ...updatedAdmin } = updateAdmin;
     if (!updatedAdmin) {
       throw new NotFoundException("Update failed'");
     }
@@ -220,7 +217,7 @@ export class ElectionAdminService {
 
   async addSystemAdmin(
     addDto: CreateSystemAdminDto,
-  ): Promise<{ message: string; systemAdmin: SystemAdmin }> {
+  ): Promise<{ message: string; systemAdmin: any }> {
     const adminProfile = new SystemAdminProfile();
     adminProfile.name = addDto.name;
     adminProfile.address = addDto.address;
@@ -245,8 +242,8 @@ export class ElectionAdminService {
     admin.profile = addedProfile;
     admin.contacts = [savedContact];
 
-    const addedAdmin = await this.systemAdminRepository.save(admin);
-
+    const addAdmin = await this.systemAdminRepository.save(admin);
+    const { password, ...addedAdmin } = addAdmin;
     if (!addedAdmin) {
       throw new NotFoundException('Adding failed');
     }

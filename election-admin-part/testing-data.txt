@@ -1,0 +1,117 @@
+a. Testing Data:
+
+
+1. Election Admin:
+
+1.1. URLs: 
+
+1.1.1. Login: Request: POST, URL: localhost:3000/election-admin/login
+1.1.2. Forgot Password: Request: PUT, URL: localhost:3000/election-admin/forget-password
+1.1.3. Registration: Request: POST, URL: localhost:3000/election-admin/registration
+1.1.4. View Profile: Request: GET, URL: localhost:3000/election-admin/view-profile
+1.1.5. Update Profile: Request: PUT, URL: localhost:3000/election-admin/update-profile
+1.1.6. Delete Profile: Request: DELETE, URL: localhost:3000/election-admin/delete-profile
+1.1.7. Upload Profile Picture: Request: POST, URL: localhost:3000/election-admin/upload-profile-picture
+1.1.8. View Profile Picture: Request: GET, URL: localhost:3000/election-admin/view-profile-picture/:fileName
+1.1.9. Delete Profile Picture: Request: DELETE, URL: localhost:3000/election-admin/delete-profile-picture/:fileName
+1.1.10. Search Election Admin: Request: POST, URL: localhost:3000/election-admin/search-election-admin
+
+1.2. JSON Request Body Data:
+
+{
+    "username": "electionAdmin0",
+    "password": "electionAdmin0$",
+    "nid": "1234567890",
+    "name": "Mr. Election Admin",
+    "address": "House: Election Admin, Road: 0",
+    "contact": "+8801134567890",
+    "email": "test0@mailinator.com",
+    "gender": "Male",
+    "religion": "Muslim"
+}
+
+
+2. System Admin:
+
+2.1. URLs:
+
+2.1.1. Add System Admin: Request: POST, URL: localhost:3000/election-admin/add-system-admin
+2.1.2. Search System Admin: Request: POST, URL: localhost:3000/election-admin/search-system-admin
+2.1.3. Remove System Admin: Request: DELETE, URL: localhost:3000/election-admin/remove-system-admin
+
+2.2. JSON Request Body Data:
+
+{
+    "username": "systemAdmin0",
+    "password": "dummyPassword0$",
+    "nid": "1234567891",
+    "name": "Mr. System Admin",
+    "address": "'Address'",
+    "contact": "+8801134567891",
+    "email": "test0@mailinator.com",
+    "gender": "'Gender'",
+    "religion": "'Religion'"
+}
+
+
+3. Political Party:
+
+3.1. URLs:
+
+3.1.1. Add Political Party: Request: POST, URL: localhost:3000/election-admin/add-party
+3.1.2. Search Political Party: Request: POST, URL: localhost:3000/election-admin/search-party
+3.1.3. Update Political Party: Request: PUT, URL: localhost:3000/election-admin/update-party
+3.1.4. Remove Political Party: Request: DELETE, URL: localhost:3000/election-admin/remove-party
+
+3.2. JSON Request Body Data:
+
+{
+    "partyName":"A Party",
+    "partyLeader":"Mr. Party Leader",
+    "partyDescription":"This party always focus on future, works for all the people of society...",
+    "foundingDate":"2024",
+    "contact":"+8801134567892"
+}
+
+
+4. Voting Poll:
+
+4.1. URLs:
+
+4.1.1. Create Voting Poll: Request: POST, URL: localhost:3000/election-admin/add-voting-poll
+4.1.2. Search Voting Poll: Request: POST, URL: localhost:3000/election-admin/search-voting-poll
+4.1.3. Update Voting Poll: Request: PUT, URL: localhost:3000/election-admin/update-voting-poll
+4.1.4. Remove Voting Poll: Request: DELETE, URL: localhost:3000/election-admin/remove-voting-poll
+
+4.2. JSON Request Body Data:
+
+{
+    "username": "candidate0",
+    "candidateName": "Mr. Candidate",
+    "partyName": "Random Party",
+    "voteCount": "3,504",
+    "electionLocation": "Random City",
+    "prediction": "82%"
+}
+
+
+5. Report Issue:
+
+5.1. URLs: 
+
+5.1.1. Report Issue: Request: POST, URL: localhost:3000/election-admin/report-issue
+
+5.2. JSON Request Body Data:
+
+{
+    "username": "electionAdmin0",
+    "email": "test0@mailinator.com",
+    "issue": "Login takes longer time than before. Please, solve the issue."
+}
+
+
+6. Logout:
+
+6.1. URLs:
+
+6.1.1. Logout: Request: POST, URL: localhost:3000/election-admin/logout

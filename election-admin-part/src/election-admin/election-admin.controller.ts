@@ -42,14 +42,6 @@ export class ElectionAdminController {
     private readonly authService: AuthService,
   ) {}
 
-  @Get('session')
-  async getAuthSession(@Session() session: Record<string, any>) {
-    console.log(session);
-    console.log(session.id);
-    session.authenticated = true;
-    return session;
-  }
-
   @Post('login')
   @UseGuards(AuthGuard('local'))
   login(@Request() req): { token: string } {
@@ -119,10 +111,11 @@ export class ElectionAdminController {
     return updatedAdmin;
   }
 
-  @Delete('delete-profile/:id')
+  @Delete('delete-profile')
   @UseGuards(AuthGuard('jwt'))
-  async deleteProfile(@Param('id') id: number): Promise<{ message: string }> {
-    return await this.adminService.deleteProfileById(+id);
+  async deleteProfile(@Request() req): Promise<{ message: string } | any> {
+    const ownId = req.user.id;
+    return await this.adminService.deleteProfileById(ownId);
   }
 
   @Post('upload-profile-picture')
@@ -289,6 +282,7 @@ export class ElectionAdminController {
   }
 
   @Post('logout')
+  @UseGuards(AuthGuard('jwt'))
   async logout(@Request() req): Promise<string> {
     return new Promise<string>((resolve, reject) => {
       req.session.destroy((err) => {
