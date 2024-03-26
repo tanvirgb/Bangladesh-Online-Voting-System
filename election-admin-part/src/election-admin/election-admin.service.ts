@@ -21,6 +21,7 @@ import { CreateVotingPollDto } from './dto/create-voting-poll.dto';
 import { VotingPoll } from './entities/voting-poll.entity';
 import { UpdateVotingPollDto } from './dto/update-voting-poll.dto';
 import { MailerService } from '@nestjs-modules/mailer';
+import { mailerConstants } from 'src/constants';
 
 @Injectable()
 export class ElectionAdminService {
@@ -122,7 +123,7 @@ export class ElectionAdminService {
   ): Promise<void> {
     await this.mailerService.sendMail({
       to: email,
-      from: 'admin0@mailinator.com',
+      from: mailerConstants.from,
       subject: 'Welcome to Our Platform!',
       text: `Welcome ${username} to our platform!`,
       html: `<b>Welcome ${username} to our plaform!</b>`,
@@ -456,21 +457,5 @@ export class ElectionAdminService {
       message: "'Reported issue' successfully!'",
       yourIssue: reportedIssue,
     };
-  }
-
-  findAll() {
-    return `This action returns all electionAdmin`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} electionAdmin`;
-  }
-
-  update(id: number, updateElectionAdminDto: UpdateElectionAdminDto) {
-    return `This action updates a #${id} electionAdmin`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} electionAdmin`;
   }
 }

@@ -3,7 +3,6 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   ValidationPipe,
@@ -35,7 +34,6 @@ import { SystemAdmin } from './entities/system-admin.entity';
 import { VotingPoll } from './entities/voting-poll.entity';
 import { CreateVotingPollDto } from './dto/create-voting-poll.dto';
 import { UpdateVotingPollDto } from './dto/update-voting-poll.dto';
-import { session } from 'passport';
 
 @Controller('election-admin')
 export class ElectionAdminController {
@@ -43,24 +41,6 @@ export class ElectionAdminController {
     private readonly adminService: ElectionAdminService,
     private readonly authService: AuthService,
   ) {}
-
-  /*   @Post('login')
-  @UseGuards(AuthGuard('local'))
-  login(@Request() req): string {
-    const { id, username } = req.user;
-    const electionAdmin: ElectionAdmin = {
-      id,
-      username,
-      uniqueId: null,
-      password: null,
-      email: null,
-      nid: null,
-      profile: null,
-      contacts: null,
-    };
-
-    return this.authService.generateToken(electionAdmin);
-  } */
 
   @Get('session')
   async getAuthSession(@Session() session: Record<string, any>) {
@@ -320,28 +300,5 @@ export class ElectionAdminController {
         }
       });
     });
-  }
-
-  @Get()
-  findAll() {
-    return this.adminService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.adminService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateElectionAdminDto: UpdateElectionAdminDto,
-  ) {
-    return this.adminService.update(+id, updateElectionAdminDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.adminService.remove(+id);
   }
 }
