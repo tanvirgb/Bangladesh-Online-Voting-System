@@ -1,8 +1,8 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as dotenv from 'dotenv';
-import { sessionConstants } from './constants';
 import * as session from 'express-session';
+import { sessionConstants } from './constants';
 
 async function bootstrap() {
   dotenv.config();

@@ -5,7 +5,7 @@ import { ElectionAdminModule } from '../election-admin.module';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './jwt.strategy';
-import { jwtConstants } from '../../constants';
+import { jwtConstants } from 'src/constants';
 
 @Module({
   imports: [
