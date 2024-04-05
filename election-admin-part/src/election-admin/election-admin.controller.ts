@@ -14,7 +14,6 @@ import {
   NotFoundException,
   Put,
   Req,
-  Session,
 } from '@nestjs/common';
 import { ElectionAdminService } from './election-admin.service';
 import { CreateElectionAdminDto } from './dto/create-election-admin.dto';

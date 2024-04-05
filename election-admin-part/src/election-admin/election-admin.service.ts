@@ -123,7 +123,7 @@ export class ElectionAdminService {
       from: mailerConstants.from,
       subject: 'Welcome to Our Platform!',
       text: `Welcome, ${name} to our platform!`,
-      html: `<b>Welcome, ${name} to our plaform!</b>`,
+      html: `<b>Welcome, ${name} to our platform!</b>`,
     });
   }
 
