@@ -89,6 +89,7 @@ export class ElectionAdminController {
     if (!ownProfile) {
       throw new NotFoundException('Your profile not found');
     }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password, ...profile } = ownProfile;
     return profile;
   }
